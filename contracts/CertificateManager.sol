@@ -179,6 +179,30 @@ contract CertificateManager is Ownable {
         delete certificates[_id];
     }
 
+    function getCertificate(uint256 _id)
+        public
+        view
+        onlyAvailable(_id)
+        returns (
+            string memory,
+            uint256,
+            uint256,
+            State,
+            bytes32,
+            bytes32
+        )
+    {
+        Certificate memory certificate = certificates[_id];
+        return (
+            certificate.name,
+            certificate.expiredAt,
+            certificate.createdAt,
+            certificate.state,
+            certificate.metadataHash,
+            certificate.participantsHash
+        );
+    }
+
     function getParticipants(uint256 _id)
         public
         view
@@ -196,17 +220,24 @@ contract CertificateManager is Ownable {
     {
         Certificate memory certificate = certificates[_id];
 
+        bytes32 nameHash = keccak256(abi.encodePacked(_name));
+
+        bool exist = false;
+        for (uint256 i = 0; i < certificate.participants.length; i++) {
+            if (nameHash == certificate.participants[i]) {
+                exist = true;
+                break;
+            }
+        }
+
+        if (!exist) return Validity.Invalid;
+
         if (certificate.state == State.Revoked) return Validity.Revoked;
 
         if (
             certificate.expiredAt > 0 && block.timestamp > certificate.expiredAt
         ) return Validity.Expired;
 
-        bytes32 nameHash = keccak256(abi.encodePacked(_name));
-        for (uint256 i = 0; i < certificate.participants.length; i++) {
-            if (nameHash == certificate.participants[i]) return Validity.Valid;
-        }
-
-        return Validity.Invalid;
+        return Validity.Valid;
     }
 }
