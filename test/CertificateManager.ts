@@ -201,4 +201,75 @@ describe("CertificateManager", () => {
       expect(participants).to.eql(update.participants);
     });
   });
+
+  describe("updateMetadata()", () => {
+    beforeEach(async () => {
+      const createTx = await certificateManager.create(
+        testId,
+        create.name,
+        create.expiredAt,
+        create.participants
+      );
+      await createTx.wait();
+    });
+
+    it("Should return an error when run by not the owner", () => {
+      const updateMetadataTx = certificateManager
+        .connect(addr1)
+        .updateMetadata(testId, update.name, update.expiredAt);
+
+      return expect(updateMetadataTx).to.be.rejected;
+    });
+
+    it("Should return an error when certificate not found", () => {
+      const updateMetadataTx = certificateManager.updateMetadata(
+        2,
+        update.name,
+        update.expiredAt
+      );
+
+      return expect(updateMetadataTx).to.be.rejected;
+    });
+
+    it("Should return an error when certificate revoked", async () => {
+      const revokeTx = await certificateManager.revoke(testId);
+      await revokeTx.wait();
+
+      const updateMetadataTx = certificateManager.updateMetadata(
+        testId,
+        update.name,
+        update.expiredAt
+      );
+
+      return expect(updateMetadataTx).to.be.rejected;
+    });
+
+    it("Should return an error when expiredAt invalid", async () => {
+      const [, , createdAt] = await certificateManager.getCertificate(testId);
+
+      const updateMetadataTx = certificateManager.updateMetadata(
+        testId,
+        update.name,
+        createdAt - 1
+      );
+
+      return expect(updateMetadataTx).to.be.rejected;
+    });
+
+    it("Should successfully updating a certificate", async () => {
+      const updateMetadataTx = await certificateManager.updateMetadata(
+        testId,
+        update.name,
+        update.expiredAt
+      );
+      await updateMetadataTx.wait();
+
+      const certificate = await certificateManager.getCertificate(testId);
+
+      expect(certificate[0]).to.equal(update.name);
+      expect(certificate[1]).to.be.a.bignumber.that.equal(update.expiredAt);
+      expect(certificate[3]).to.equal(State.Updated);
+      expect(certificate[4]).to.equal(update.metadataHash);
+    });
+  });
 });
