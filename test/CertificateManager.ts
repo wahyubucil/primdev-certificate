@@ -54,11 +54,14 @@ describe("CertificateManager", () => {
       return expect(createTx2).to.be.rejected;
     });
 
-    it("Should return an error when expiredAt invalid", () => {
+    it("Should return an error when expiredAt invalid", async () => {
+      const recentBlock = await ethers.provider.getBlockNumber();
+      const { timestamp } = await ethers.provider.getBlock(recentBlock);
+
       const createTx = certificateManager.create(
         testId,
         create.name,
-        1,
+        timestamp - 1,
         create.participants
       );
 
@@ -118,6 +121,84 @@ describe("CertificateManager", () => {
 
       const [, , , state] = await certificateManager.getCertificate(testId);
       expect(state).to.be.equal(State.Revoked);
+    });
+  });
+
+  describe("update()", () => {
+    beforeEach(async () => {
+      const createTx = await certificateManager.create(
+        testId,
+        create.name,
+        create.expiredAt,
+        create.participants
+      );
+      await createTx.wait();
+    });
+
+    it("Should return an error when run by not the owner", () => {
+      const updateTx = certificateManager
+        .connect(addr1)
+        .update(testId, update.name, update.expiredAt, update.participants);
+
+      return expect(updateTx).to.be.rejected;
+    });
+
+    it("Should return an error when certificate not found", () => {
+      const updateTx = certificateManager.update(
+        2,
+        update.name,
+        update.expiredAt,
+        update.participants
+      );
+
+      return expect(updateTx).to.be.rejected;
+    });
+
+    it("Should return an error when certificate revoked", async () => {
+      const revokeTx = await certificateManager.revoke(testId);
+      await revokeTx.wait();
+
+      const updateTx = certificateManager.update(
+        testId,
+        update.name,
+        update.expiredAt,
+        update.participants
+      );
+
+      return expect(updateTx).to.be.rejected;
+    });
+
+    it("Should return an error when expiredAt invalid", async () => {
+      const [, , createdAt] = await certificateManager.getCertificate(testId);
+
+      const updateTx = certificateManager.update(
+        testId,
+        update.name,
+        createdAt - 1,
+        update.participants
+      );
+
+      return expect(updateTx).to.be.rejected;
+    });
+
+    it("Should successfully updating a certificate", async () => {
+      const updateTx = await certificateManager.update(
+        testId,
+        update.name,
+        update.expiredAt,
+        update.participants
+      );
+      await updateTx.wait();
+
+      const certificate = await certificateManager.getCertificate(testId);
+      const participants = await certificateManager.getParticipants(testId);
+
+      expect(certificate[0]).to.equal(update.name);
+      expect(certificate[1]).to.be.a.bignumber.that.equal(update.expiredAt);
+      expect(certificate[3]).to.equal(State.Updated);
+      expect(certificate[4]).to.equal(update.metadataHash);
+      expect(certificate[5]).to.equal(update.participantsHash);
+      expect(participants).to.eql(update.participants);
     });
   });
 });
