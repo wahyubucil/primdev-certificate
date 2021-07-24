@@ -9,16 +9,16 @@ const update = defineTestData("Workshop CSS", oneYearFromNow, [
   "0x3f9ce16dfc1858f7356f63c4ddf27900b00b5f61a86ae33e6dbb4a8c7c33b1b7",
 ]);
 
-describe("CertificateManager", () => {
+describe("CertificateManager", function () {
   let owner: SignerWithAddress;
   let addr1: SignerWithAddress;
   let certificateManager: Contract;
 
-  before(async () => {
+  before(async function () {
     const [owner, addr1] = await ethers.getSigners();
   });
 
-  beforeEach(async () => {
+  beforeEach(async function () {
     const CertificateManager = await ethers.getContractFactory(
       "CertificateManager"
     );
@@ -26,8 +26,8 @@ describe("CertificateManager", () => {
     await certificateManager.deployed();
   });
 
-  describe("create()", () => {
-    it("Should return an error when run by not the owner", () => {
+  describe("create()", function () {
+    it("Should return an error when run by not the owner", function () {
       const createTx = certificateManager
         .connect(addr1)
         .create(testId, create.name, create.expiredAt, create.participants);
@@ -35,7 +35,7 @@ describe("CertificateManager", () => {
       return expect(createTx).to.be.rejected;
     });
 
-    it("Should return an error when creating on existing certificate", async () => {
+    it("Should return an error when creating on existing certificate", async function () {
       const createTx = await certificateManager.create(
         testId,
         create.name,
@@ -54,7 +54,7 @@ describe("CertificateManager", () => {
       return expect(createTx2).to.be.rejected;
     });
 
-    it("Should return an error when expiredAt invalid", async () => {
+    it("Should return an error when expiredAt invalid", async function () {
       const recentBlock = await ethers.provider.getBlockNumber();
       const { timestamp } = await ethers.provider.getBlock(recentBlock);
 
@@ -68,7 +68,7 @@ describe("CertificateManager", () => {
       return expect(createTx).to.be.rejected;
     });
 
-    it("Should successfully creating a certificate", async () => {
+    it("Should successfully creating a certificate", async function () {
       const createTx = await certificateManager.create(
         testId,
         create.name,
@@ -92,8 +92,8 @@ describe("CertificateManager", () => {
     });
   });
 
-  describe("revoke()", () => {
-    beforeEach(async () => {
+  describe("revoke()", function () {
+    beforeEach(async function () {
       const createTx = await certificateManager.create(
         testId,
         create.name,
@@ -103,19 +103,19 @@ describe("CertificateManager", () => {
       await createTx.wait();
     });
 
-    it("Should return an error when run by not the owner", () => {
+    it("Should return an error when run by not the owner", function () {
       const revokeTx = certificateManager.connect(addr1).revoke(testId);
 
       return expect(revokeTx).to.be.rejected;
     });
 
-    it("Should return an error when certificate not found", () => {
-      const revokeTx = certificateManager.revoke(2);
+    it("Should return an error when certificate not found", function () {
+      const revokeTx = certificateManager.revoke(testId + 1);
 
       return expect(revokeTx).to.be.rejected;
     });
 
-    it("Should successfully revoke a certificate", async () => {
+    it("Should successfully revoke a certificate", async function () {
       const revokeTx = await certificateManager.revoke(testId);
       await revokeTx.wait();
 
@@ -124,8 +124,8 @@ describe("CertificateManager", () => {
     });
   });
 
-  describe("update()", () => {
-    beforeEach(async () => {
+  describe("update()", function () {
+    beforeEach(async function () {
       const createTx = await certificateManager.create(
         testId,
         create.name,
@@ -135,7 +135,7 @@ describe("CertificateManager", () => {
       await createTx.wait();
     });
 
-    it("Should return an error when run by not the owner", () => {
+    it("Should return an error when run by not the owner", function () {
       const updateTx = certificateManager
         .connect(addr1)
         .update(testId, update.name, update.expiredAt, update.participants);
@@ -143,9 +143,9 @@ describe("CertificateManager", () => {
       return expect(updateTx).to.be.rejected;
     });
 
-    it("Should return an error when certificate not found", () => {
+    it("Should return an error when certificate not found", function () {
       const updateTx = certificateManager.update(
-        2,
+        testId + 1,
         update.name,
         update.expiredAt,
         update.participants
@@ -154,7 +154,7 @@ describe("CertificateManager", () => {
       return expect(updateTx).to.be.rejected;
     });
 
-    it("Should return an error when certificate revoked", async () => {
+    it("Should return an error when certificate revoked", async function () {
       const revokeTx = await certificateManager.revoke(testId);
       await revokeTx.wait();
 
@@ -168,7 +168,7 @@ describe("CertificateManager", () => {
       return expect(updateTx).to.be.rejected;
     });
 
-    it("Should return an error when expiredAt invalid", async () => {
+    it("Should return an error when expiredAt invalid", async function () {
       const [, , createdAt] = await certificateManager.getCertificate(testId);
 
       const updateTx = certificateManager.update(
@@ -181,7 +181,7 @@ describe("CertificateManager", () => {
       return expect(updateTx).to.be.rejected;
     });
 
-    it("Should successfully updating a certificate", async () => {
+    it("Should successfully updating a certificate", async function () {
       const updateTx = await certificateManager.update(
         testId,
         update.name,
@@ -202,8 +202,8 @@ describe("CertificateManager", () => {
     });
   });
 
-  describe("updateMetadata()", () => {
-    beforeEach(async () => {
+  describe("updateMetadata()", function () {
+    beforeEach(async function () {
       const createTx = await certificateManager.create(
         testId,
         create.name,
@@ -213,7 +213,7 @@ describe("CertificateManager", () => {
       await createTx.wait();
     });
 
-    it("Should return an error when run by not the owner", () => {
+    it("Should return an error when run by not the owner", function () {
       const updateMetadataTx = certificateManager
         .connect(addr1)
         .updateMetadata(testId, update.name, update.expiredAt);
@@ -221,9 +221,9 @@ describe("CertificateManager", () => {
       return expect(updateMetadataTx).to.be.rejected;
     });
 
-    it("Should return an error when certificate not found", () => {
+    it("Should return an error when certificate not found", function () {
       const updateMetadataTx = certificateManager.updateMetadata(
-        2,
+        testId + 1,
         update.name,
         update.expiredAt
       );
@@ -231,7 +231,7 @@ describe("CertificateManager", () => {
       return expect(updateMetadataTx).to.be.rejected;
     });
 
-    it("Should return an error when certificate revoked", async () => {
+    it("Should return an error when certificate revoked", async function () {
       const revokeTx = await certificateManager.revoke(testId);
       await revokeTx.wait();
 
@@ -244,7 +244,7 @@ describe("CertificateManager", () => {
       return expect(updateMetadataTx).to.be.rejected;
     });
 
-    it("Should return an error when expiredAt invalid", async () => {
+    it("Should return an error when expiredAt invalid", async function () {
       const [, , createdAt] = await certificateManager.getCertificate(testId);
 
       const updateMetadataTx = certificateManager.updateMetadata(
@@ -256,7 +256,7 @@ describe("CertificateManager", () => {
       return expect(updateMetadataTx).to.be.rejected;
     });
 
-    it("Should successfully updating a certificate", async () => {
+    it("Should successfully updating a certificate", async function () {
       const updateMetadataTx = await certificateManager.updateMetadata(
         testId,
         update.name,
@@ -273,8 +273,8 @@ describe("CertificateManager", () => {
     });
   });
 
-  describe("updateParticipants()", () => {
-    beforeEach(async () => {
+  describe("updateParticipants()", function () {
+    beforeEach(async function () {
       const createTx = await certificateManager.create(
         testId,
         create.name,
@@ -284,7 +284,7 @@ describe("CertificateManager", () => {
       await createTx.wait();
     });
 
-    it("Should return an error when run by not the owner", () => {
+    it("Should return an error when run by not the owner", function () {
       const updateParticipantsTx = certificateManager
         .connect(addr1)
         .updateParticipants(testId, update.participants);
@@ -292,16 +292,16 @@ describe("CertificateManager", () => {
       return expect(updateParticipantsTx).to.be.rejected;
     });
 
-    it("Should return an error when certificate not found", () => {
+    it("Should return an error when certificate not found", function () {
       const updateParticipantsTx = certificateManager.updateParticipants(
-        2,
+        testId + 1,
         update.participants
       );
 
       return expect(updateParticipantsTx).to.be.rejected;
     });
 
-    it("Should return an error when certificate revoked", async () => {
+    it("Should return an error when certificate revoked", async function () {
       const revokeTx = await certificateManager.revoke(testId);
       await revokeTx.wait();
 
@@ -313,7 +313,7 @@ describe("CertificateManager", () => {
       return expect(updateParticipantsTx).to.be.rejected;
     });
 
-    it("Should successfully updating a certificate", async () => {
+    it("Should successfully updating a certificate", async function () {
       const updateParticipantsTx = await certificateManager.updateParticipants(
         testId,
         update.participants
@@ -326,8 +326,8 @@ describe("CertificateManager", () => {
     });
   });
 
-  describe("remove()", () => {
-    beforeEach(async () => {
+  describe("remove()", function () {
+    beforeEach(async function () {
       const createTx = await certificateManager.create(
         testId,
         create.name,
@@ -337,19 +337,19 @@ describe("CertificateManager", () => {
       await createTx.wait();
     });
 
-    it("Should return an error when run by not the owner", () => {
+    it("Should return an error when run by not the owner", function () {
       const removeTx = certificateManager.connect(addr1).remove(testId);
 
       return expect(removeTx).to.be.rejected;
     });
 
-    it("Should return an error when certificate not found", () => {
-      const removeTx = certificateManager.remove(2);
+    it("Should return an error when certificate not found", function () {
+      const removeTx = certificateManager.remove(testId + 1);
 
       return expect(removeTx).to.be.rejected;
     });
 
-    it("Should successfully remove a certificate", async () => {
+    it("Should successfully remove a certificate", async function () {
       const removeTx = await certificateManager.remove(testId);
       await removeTx.wait();
 
