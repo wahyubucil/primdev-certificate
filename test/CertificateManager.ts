@@ -272,4 +272,57 @@ describe("CertificateManager", () => {
       expect(certificate[4]).to.equal(update.metadataHash);
     });
   });
+
+  describe("updateParticipants()", () => {
+    beforeEach(async () => {
+      const createTx = await certificateManager.create(
+        testId,
+        create.name,
+        create.expiredAt,
+        create.participants
+      );
+      await createTx.wait();
+    });
+
+    it("Should return an error when run by not the owner", () => {
+      const updateParticipantsTx = certificateManager
+        .connect(addr1)
+        .updateParticipants(testId, update.participants);
+
+      return expect(updateParticipantsTx).to.be.rejected;
+    });
+
+    it("Should return an error when certificate not found", () => {
+      const updateParticipantsTx = certificateManager.updateParticipants(
+        2,
+        update.participants
+      );
+
+      return expect(updateParticipantsTx).to.be.rejected;
+    });
+
+    it("Should return an error when certificate revoked", async () => {
+      const revokeTx = await certificateManager.revoke(testId);
+      await revokeTx.wait();
+
+      const updateParticipantsTx = certificateManager.updateParticipants(
+        testId,
+        update.participants
+      );
+
+      return expect(updateParticipantsTx).to.be.rejected;
+    });
+
+    it("Should successfully updating a certificate", async () => {
+      const updateParticipantsTx = await certificateManager.updateParticipants(
+        testId,
+        update.participants
+      );
+      await updateParticipantsTx.wait();
+
+      const participants = await certificateManager.getParticipants(testId);
+
+      expect(participants).to.eql(update.participants);
+    });
+  });
 });
