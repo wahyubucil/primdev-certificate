@@ -1,9 +1,6 @@
 import { ethers } from "ethers";
 
-export const testId = 1;
-export const testName = "Workshop HTML";
-export const testExpiredAt = 0;
-export const testParticipants = [
+const sampleParticipants = [
   "0x38723d65564e735ff2e39a979cc2d67195bad524e99ce51664d0cba01e83fd23",
   "0x43278b4cbdd34ecb4b5de3bc1e59b360140dd9730c7fb3a99e893685077ac50c",
   "0x2394727f2e3d29ce33db4d01a3429e025c1d15a89f5d82d23e13dbdc7ce87fdf",
@@ -29,15 +26,37 @@ export const testParticipants = [
   "0xf2b965a3d484c1b234cf2b7e479b37e1f01a7f9a02799e9c25dd5fc0ca9d7034",
   "0x8c604c03cd7ac89b9ade80c573401e8f05a6d83e9fd0f76a9815a6a98ea6aa22",
 ];
-export const testMetadataHash = ethers.utils.keccak256(
-  ethers.utils.solidityPack(["string", "uint256"], [testName, testExpiredAt])
-);
-export const testParticipantsHash = ethers.utils.keccak256(
-  ethers.utils.solidityPack(
-    Array(testParticipants.length).fill("bytes32"),
-    testParticipants
-  )
-);
+
+export const testId = 1;
+
+export function defineTestData(
+  name: string,
+  expiredAt: number,
+  additionalParticipants?: string[]
+) {
+  const participants = additionalParticipants
+    ? [...sampleParticipants, ...additionalParticipants]
+    : sampleParticipants;
+
+  const metadataHash = ethers.utils.keccak256(
+    ethers.utils.solidityPack(["string", "uint256"], [name, expiredAt])
+  );
+
+  const participantsHash = ethers.utils.keccak256(
+    ethers.utils.solidityPack(
+      Array(participants.length).fill("bytes32"),
+      participants
+    )
+  );
+
+  return {
+    name,
+    expiredAt,
+    participants,
+    metadataHash,
+    participantsHash,
+  };
+}
 
 export const enum State {
   None,
@@ -52,3 +71,5 @@ export const enum Validity {
   Expired,
   Invalid,
 }
+
+export const oneYearFromNow = Math.floor(Date.now() / 1000) + 31556926;

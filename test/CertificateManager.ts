@@ -2,15 +2,12 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import type { Contract } from "ethers";
 import { ethers } from "hardhat";
-import {
-  State,
-  testExpiredAt,
-  testId,
-  testMetadataHash,
-  testName,
-  testParticipants,
-  testParticipantsHash,
-} from "./helper/data";
+import { defineTestData, oneYearFromNow, State, testId } from "./helper/data";
+
+const create = defineTestData("Workshop HTML", 0);
+const update = defineTestData("Workshop CSS", oneYearFromNow, [
+  "0x3f9ce16dfc1858f7356f63c4ddf27900b00b5f61a86ae33e6dbb4a8c7c33b1b7",
+]);
 
 describe("CertificateManager", () => {
   let owner: SignerWithAddress;
@@ -33,7 +30,7 @@ describe("CertificateManager", () => {
     it("Should return an error when run by not the owner", () => {
       const createTx = certificateManager
         .connect(addr1)
-        .create(testId, testName, testExpiredAt, testParticipants);
+        .create(testId, create.name, create.expiredAt, create.participants);
 
       return expect(createTx).to.be.rejected;
     });
@@ -41,17 +38,17 @@ describe("CertificateManager", () => {
     it("Should return an error when creating on existing certificate", async () => {
       const createTx = await certificateManager.create(
         testId,
-        testName,
-        testExpiredAt,
-        testParticipants
+        create.name,
+        create.expiredAt,
+        create.participants
       );
       await createTx.wait();
 
       const createTx2 = certificateManager.create(
         testId,
-        testName,
-        testExpiredAt,
-        testParticipants
+        create.name,
+        create.expiredAt,
+        create.participants
       );
 
       return expect(createTx2).to.be.rejected;
@@ -60,9 +57,9 @@ describe("CertificateManager", () => {
     it("Should return an error when expiredAt invalid", () => {
       const createTx = certificateManager.create(
         testId,
-        testName,
+        create.name,
         1,
-        testParticipants
+        create.participants
       );
 
       return expect(createTx).to.be.rejected;
@@ -71,9 +68,9 @@ describe("CertificateManager", () => {
     it("Should successfully creating a certificate", async () => {
       const createTx = await certificateManager.create(
         testId,
-        testName,
-        testExpiredAt,
-        testParticipants
+        create.name,
+        create.expiredAt,
+        create.participants
       );
       const { blockNumber } = await createTx.wait();
 
@@ -82,13 +79,13 @@ describe("CertificateManager", () => {
       const certificate = await certificateManager.getCertificate(testId);
       const participants = await certificateManager.getParticipants(testId);
 
-      expect(certificate[0]).to.equal(testName);
-      expect(certificate[1]).to.be.a.bignumber.that.equal(testExpiredAt);
+      expect(certificate[0]).to.equal(create.name);
+      expect(certificate[1]).to.be.a.bignumber.that.equal(create.expiredAt);
       expect(certificate[2]).to.be.a.bignumber.that.equal(timestamp);
       expect(certificate[3]).to.equal(State.Created);
-      expect(certificate[4]).to.equal(testMetadataHash);
-      expect(certificate[5]).to.equal(testParticipantsHash);
-      expect(participants).to.eql(testParticipants);
+      expect(certificate[4]).to.equal(create.metadataHash);
+      expect(certificate[5]).to.equal(create.participantsHash);
+      expect(participants).to.eql(create.participants);
     });
   });
 });
