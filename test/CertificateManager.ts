@@ -325,4 +325,36 @@ describe("CertificateManager", () => {
       expect(participants).to.eql(update.participants);
     });
   });
+
+  describe("remove()", () => {
+    beforeEach(async () => {
+      const createTx = await certificateManager.create(
+        testId,
+        create.name,
+        create.expiredAt,
+        create.participants
+      );
+      await createTx.wait();
+    });
+
+    it("Should return an error when run by not the owner", () => {
+      const removeTx = certificateManager.connect(addr1).remove(testId);
+
+      return expect(removeTx).to.be.rejected;
+    });
+
+    it("Should return an error when certificate not found", () => {
+      const removeTx = certificateManager.remove(2);
+
+      return expect(removeTx).to.be.rejected;
+    });
+
+    it("Should successfully remove a certificate", async () => {
+      const removeTx = await certificateManager.remove(testId);
+      await removeTx.wait();
+
+      const getData = certificateManager.getCertificate(testId);
+      return expect(getData).to.be.rejected;
+    });
+  });
 });
