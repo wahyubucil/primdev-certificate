@@ -88,4 +88,36 @@ describe("CertificateManager", () => {
       expect(participants).to.eql(create.participants);
     });
   });
+
+  describe("revoke()", () => {
+    beforeEach(async () => {
+      const createTx = await certificateManager.create(
+        testId,
+        create.name,
+        create.expiredAt,
+        create.participants
+      );
+      await createTx.wait();
+    });
+
+    it("Should return an error when run by not the owner", () => {
+      const revokeTx = certificateManager.connect(addr1).revoke(testId);
+
+      return expect(revokeTx).to.be.rejected;
+    });
+
+    it("Should return an error when certificate not found", () => {
+      const revokeTx = certificateManager.revoke(2);
+
+      return expect(revokeTx).to.be.rejected;
+    });
+
+    it("Should successfully revoke a certificate", async () => {
+      const revokeTx = await certificateManager.revoke(testId);
+      await revokeTx.wait();
+
+      const [, , , state] = await certificateManager.getCertificate(testId);
+      expect(state).to.be.equal(State.Revoked);
+    });
+  });
 });
