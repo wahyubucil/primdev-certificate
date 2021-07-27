@@ -1,7 +1,10 @@
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { CertificateManager, CertificateManager__factory } from "../typechain";
+import {
+  CertificateManager,
+  CertificateManager__factory,
+} from "~/contract-types";
 import {
   defineTestData,
   oneYearFromNow,

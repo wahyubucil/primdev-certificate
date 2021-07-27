@@ -23,6 +23,15 @@ task("accounts", "Prints the list of accounts", async (_, hre) => {
 
 const config: HardhatUserConfig = {
   solidity: "0.8.6",
+  paths: {
+    sources: "./smart-contract/contracts",
+    tests: "./smart-contract/test",
+    cache: "./smart-contract/cache",
+    artifacts: "./smart-contract/artifacts",
+  },
+  typechain: {
+    outDir: "./contract-types",
+  },
 };
 
 export default config;
