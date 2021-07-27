@@ -1,16 +1,26 @@
 {
   "compilerOptions": {
-    "target": "es2020",
-    "module": "commonjs",
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "jsx": "preserve",
+    "baseUrl": "./",
     "strict": true,
     "esModuleInterop": true,
     "outDir": "dist",
     "resolveJsonModule": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["mocha", "snowpack-env"],
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
     "paths": {
       "~/contract-types": ["./contract-types"]
     }
   },
   "include": [
+    "src",
+    "types",
     "smart-contract/scripts",
     "smart-contract/test",
     "./contract-types"
