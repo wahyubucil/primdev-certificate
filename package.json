@@ -1,34 +1,38 @@
 {
   "name": "primdev-certificate",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "license": "MIT",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "contract:compile": "hardhat compile",
+    "contract:clean": "hardhat clean",
+    "contract:test": "hardhat test"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@typechain/ethers-v5": "^7.0.1",
+    "@typechain/hardhat": "^2.2.0",
+    "@types/bn.js": "^5.1.0",
     "@types/chai": "^4.2.21",
     "@types/chai-as-promised": "^7.1.4",
     "@types/mocha": "^9.0.0",
-    "@types/node": "^16.4.1",
+    "@types/node": "^16.4.3",
     "bn.js": "^5.2.0",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "chai-bn": "^0.3.0",
     "ethereum-waffle": "^3.4.0",
-    "ethers": "^5.4.1",
     "hardhat": "^2.5.0",
     "prettier": "^2.3.2",
     "prettier-plugin-solidity": "^1.0.0-beta.17",
     "ts-node": "^10.1.0",
+    "typechain": "^5.1.2",
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.2.0"
+    "@openzeppelin/contracts": "^4.2.0",
+    "ethers": "^5.4.2"
   }
 }
