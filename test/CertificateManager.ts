@@ -1,7 +1,7 @@
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import type { Contract } from "ethers";
 import { ethers } from "hardhat";
+import { CertificateManager, CertificateManager__factory } from "../typechain";
 import {
   defineTestData,
   oneYearFromNow,
@@ -18,16 +18,17 @@ const update = defineTestData("Workshop CSS", oneYearFromNow, [
 describe("CertificateManager", function () {
   let owner: SignerWithAddress;
   let addr1: SignerWithAddress;
-  let certificateManager: Contract;
+  let certificateManager: CertificateManager;
 
   before(async function () {
     [owner, addr1] = await ethers.getSigners();
   });
 
   beforeEach(async function () {
-    const CertificateManager = await ethers.getContractFactory(
-      "CertificateManager"
-    );
+    const CertificateManager = (await ethers.getContractFactory(
+      "CertificateManager",
+      owner
+    )) as CertificateManager__factory;
     certificateManager = await CertificateManager.deploy();
     await certificateManager.deployed();
   });
