@@ -1,6 +1,12 @@
 import type { FC } from 'react';
 import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { Routes } from './Routes';
 
-const App: FC = () => <h1>PrimDev Certificate</h1>;
+const App: FC = () => (
+  <Router>
+    <Routes />
+  </Router>
+);
 
 export default App;
