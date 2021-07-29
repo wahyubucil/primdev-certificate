@@ -1,8 +1,9 @@
-import { List } from 'antd';
+import { Button, List, Row, Space } from 'antd';
 import type { FC } from 'react';
 import React from 'react';
 import type { Certificate } from '@/interfaces/Certificate';
 import { CertificateCard } from './CertificateCard';
+import { PlusOutlined } from '@ant-design/icons';
 
 const sampleData: Certificate[] = [
   {
@@ -24,13 +25,21 @@ const sampleData: Certificate[] = [
 ];
 
 export const CertificateList: FC = () => (
-  <List
-    dataSource={sampleData}
-    grid={{ gutter: 16, column: 3 }}
-    renderItem={(item) => (
-      <List.Item>
-        <CertificateCard data={item} />
-      </List.Item>
-    )}
-  />
+  <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
+    <Row justify="space-between">
+      <h1>Certificate List</h1>
+      <Button type="primary" icon={<PlusOutlined />} size="large">
+        Create
+      </Button>
+    </Row>
+    <List
+      dataSource={sampleData}
+      grid={{ gutter: 16, column: 3 }}
+      renderItem={(item) => (
+        <List.Item key={item.id}>
+          <CertificateCard data={item} />
+        </List.Item>
+      )}
+    />
+  </Space>
 );
