@@ -1,12 +1,15 @@
-import type { FC } from 'react';
-import React from 'react';
+import React, { FC, lazy, Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { Dashboard } from './pages/dashboard';
-import { Home } from './pages/home';
+import { Loader } from './components/Loader';
+
+const Home = lazy(() => import('./pages/home'));
+const Dashboard = lazy(() => import('./pages/dashboard'));
 
 export const Routes: FC = () => (
-  <Switch>
-    <Route path="/dashboard" component={Dashboard} />
-    <Route path="/" component={Home} />
-  </Switch>
+  <Suspense fallback={<Loader />}>
+    <Switch>
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/" component={Home} />
+    </Switch>
+  </Suspense>
 );

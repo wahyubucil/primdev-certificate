@@ -1,4 +1,11 @@
-import type { FC } from 'react';
-import React from 'react';
+import React, { FC } from 'react';
+import { Link } from 'react-router-dom';
 
-export const Home: FC = () => <h1>Home</h1>;
+const Home: FC = () => (
+  <>
+    <h1>Home</h1>
+    <Link to="/dashboard">To Dashboard</Link>
+  </>
+);
+
+export default Home;

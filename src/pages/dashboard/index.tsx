@@ -1,4 +1,4 @@
-import { Avatar, Col, Dropdown, Layout, Menu, Row } from 'antd';
+import { Avatar, Col, Dropdown, Layout, Menu, Row, Spin } from 'antd';
 import {
   CopyrightOutlined,
   DownOutlined,
@@ -6,24 +6,26 @@ import {
   LogoutOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import type { FC } from 'react';
-import React from 'react';
+import React, { FC, lazy, Suspense } from 'react';
 import { Link, Route, Switch, useRouteMatch } from 'react-router-dom';
 import './index.scss';
 import logo from '@/assets/logo-primakara-developers.svg';
-import { CertificateList } from '../certificate-list';
+import { Loader } from '@/components/Loader';
+
+const CertificateList = lazy(() => import('../certificate-list'));
+const CertificateDetail = lazy(() => import('../certificate-detail'));
 
 const { Header, Content, Footer } = Layout;
 
 const menu = (
   <Menu>
-    <Menu.Item icon={<LogoutOutlined />}>
+    <Menu.Item icon={<LogoutOutlined />} key="logout">
       <a onClick={() => console.log('Logout')}>Logout</a>
     </Menu.Item>
   </Menu>
 );
 
-export const Dashboard: FC = () => {
+const Dashboard: FC = () => {
   const match = useRouteMatch();
 
   return (
@@ -51,12 +53,12 @@ export const Dashboard: FC = () => {
         </Row>
       </Header>
       <Content className="Dashboard__content">
-        <Switch>
-          <Route path={`${match.path}/:id`}>
-            <h3>Detail</h3>
-          </Route>
-          <Route path={match.path} component={CertificateList} />
-        </Switch>
+        <Suspense fallback={<Loader />}>
+          <Switch>
+            <Route path={`${match.path}/:id`} component={CertificateDetail} />
+            <Route path={match.path} component={CertificateList} />
+          </Switch>
+        </Suspense>
       </Content>
       <Footer className="Dashboard__footer">
         <div className="Dashboard__footer-links">
@@ -84,3 +86,5 @@ export const Dashboard: FC = () => {
     </Layout>
   );
 };
+
+export default Dashboard;

@@ -1,5 +1,4 @@
-import type { FC } from 'react';
-import React from 'react';
+import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
 import type { Certificate } from '@/interfaces/Certificate';
 import { Card, Col, Row, Space, Typography } from 'antd';
