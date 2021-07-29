@@ -2,6 +2,7 @@ import { DeleteOutlined, EditOutlined, UndoOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Row, Space, Typography } from 'antd';
 import type { BaseType } from 'antd/lib/typography/Base';
 import React, { VFC } from 'react';
+import { BlockchainInfo } from './BlockchainInfo';
 import { Participants } from './Participants';
 
 const { Title, Text } = Typography;
@@ -38,7 +39,9 @@ const CertificateDetail: VFC = () => (
       </Card>
     </Col>
     <Col span={8}>
-      <Card title="Blockchain Information"></Card>
+      <Card title="Blockchain Information">
+        <BlockchainInfo />
+      </Card>
     </Col>
   </Row>
 );
