@@ -9,6 +9,18 @@ export default {
     '@snowpack/plugin-dotenv',
     ['@snowpack/plugin-typescript', { args: '--project ./src/tsconfig.json' }],
     '@snowpack/plugin-sass',
+    [
+      '@canarise/snowpack-eslint-plugin',
+      {
+        globs: ['src/**/*.tsx', 'src/**/*.ts'],
+        options: {
+          cache: true,
+          cacheStrategy: 'content',
+          fix: false,
+          cacheLocation: './node_modules/.cache/.eslintcache',
+        },
+      },
+    ],
   ],
   alias: {
     '~/contract-types': './contract-types',

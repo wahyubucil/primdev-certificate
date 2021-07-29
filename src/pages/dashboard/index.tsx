@@ -1,4 +1,4 @@
-import { Avatar, Col, Dropdown, Layout, Menu, Row, Spin } from 'antd';
+import { Avatar, Col, Dropdown, Layout, Menu, Row } from 'antd';
 import {
   CopyrightOutlined,
   DownOutlined,
@@ -20,7 +20,7 @@ const { Header, Content, Footer } = Layout;
 const menu = (
   <Menu>
     <Menu.Item icon={<LogoutOutlined />} key="logout">
-      <a onClick={() => console.log('Logout')}>Logout</a>
+      Logout
     </Menu.Item>
   </Menu>
 );
@@ -62,23 +62,32 @@ const Dashboard: FC = () => {
       </Content>
       <Footer className="Dashboard__footer">
         <div className="Dashboard__footer-links">
-          <a target="_blank" href="https://github.com/primakara-developers">
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://github.com/primakara-developers"
+          >
             Primakara Developers
           </a>
           <a
             title="github"
             target="_blank"
+            rel="noopener noreferrer"
             href="https://github.com/wahyubucil/primdev-certificate"
           >
             <GithubOutlined />
           </a>
-          <a target="_blank" href="https://nextap.co">
+          <a target="_blank" rel="noopener noreferrer" href="https://nextap.co">
             Nextap &amp; Company
           </a>
         </div>
         <div>
           <CopyrightOutlined /> {new Date().getFullYear()} Created by{' '}
-          <a href="https://wahyubucil.web.app" target="_blank">
+          <a
+            href="https://wahyubucil.web.app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Wahyu Budi Saputra
           </a>
         </div>
