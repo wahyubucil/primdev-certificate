@@ -6,11 +6,7 @@ import { Home } from './pages/home';
 
 export const Routes: FC = () => (
   <Switch>
-    <Route path="/dashboard">
-      <Dashboard />
-    </Route>
-    <Route path="/">
-      <Home />
-    </Route>
+    <Route path="/dashboard" component={Dashboard} />
+    <Route path="/" component={Home} />
   </Switch>
 );
