@@ -1,6 +1,7 @@
 import { Avatar, Col, Dropdown, Layout, Menu, Row } from 'antd';
 import {
   CopyrightOutlined,
+  DownOutlined,
   GithubOutlined,
   LogoutOutlined,
   UserOutlined,
@@ -42,7 +43,8 @@ export const Dashboard: FC = () => {
             <Dropdown overlay={menu} placement="bottomRight">
               <div className="Dashboard__header-menu">
                 <Avatar className="Dashboard__avatar" icon={<UserOutlined />} />
-                <span>Administrator</span>
+                <span className="Dashboard__user">Administrator</span>
+                <DownOutlined />
               </div>
             </Dropdown>
           </Col>
