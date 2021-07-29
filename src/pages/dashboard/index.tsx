@@ -1,5 +1,10 @@
 import { Avatar, Col, Dropdown, Layout, Menu, Row } from 'antd';
-import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  CopyrightOutlined,
+  GithubOutlined,
+  LogoutOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import type { FC } from 'react';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -39,11 +44,31 @@ export const Dashboard: FC = () => (
         </Col>
       </Row>
     </Header>
-    <Content style={{ padding: '50px' }}>
+    <Content className="Dashboard__content">
       <div className="site-layout-content">Content</div>
     </Content>
-    <Footer style={{ textAlign: 'center' }}>
-      Ant Design ©2018 Created by Ant UED
+    <Footer className="Dashboard__footer">
+      <div className="Dashboard__footer-links">
+        <a target="_blank" href="https://github.com/primakara-developers">
+          Primakara Developers
+        </a>
+        <a
+          title="github"
+          target="_blank"
+          href="https://github.com/wahyubucil/primdev-certificate"
+        >
+          <GithubOutlined />
+        </a>
+        <a target="_blank" href="https://nextap.co">
+          Nextap &amp; Company
+        </a>
+      </div>
+      <div>
+        <CopyrightOutlined /> {new Date().getFullYear()} Created by{' '}
+        <a href="https://wahyubucil.web.app" target="_blank">
+          Wahyu Budi Saputra
+        </a>
+      </div>
     </Footer>
   </Layout>
 );

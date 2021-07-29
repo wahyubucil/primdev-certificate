@@ -12,4 +12,31 @@
     background-color: #43c2cb;
     margin-right: 8px;
   }
+
+  &__content {
+    margin: 50px;
+    min-height: calc(100vh - 100px - 64px);
+  }
+
+  &__footer {
+    color: rgba(0, 0, 0, 0.45);
+    text-align: center;
+
+    a {
+      color: rgba(0, 0, 0, 0.45);
+      transition: all 0.3s;
+    }
+
+    a:hover {
+      color: rgba(0, 0, 0, 0.85);
+    }
+  }
+
+  &__footer-links {
+    margin-bottom: 8px;
+
+    a:nth-child(2) {
+      margin: 0 40px;
+    }
+  }
 }
