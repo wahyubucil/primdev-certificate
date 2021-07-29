@@ -49,6 +49,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.6.2",
     "@openzeppelin/contracts": "^4.2.0",
     "antd": "^4.16.9",
     "ethers": "^5.4.2",

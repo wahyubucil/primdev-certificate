@@ -1,0 +1,15 @@
+.Dashboard {
+  &__header {
+    background-color: #fff;
+    box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
+  }
+
+  &__header-menu {
+    cursor: pointer;
+  }
+
+  &__avatar {
+    background-color: #43c2cb;
+    margin-right: 8px;
+  }
+}
