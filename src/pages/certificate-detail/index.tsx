@@ -1,7 +1,7 @@
 import { DeleteOutlined, EditOutlined, UndoOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Row, Space, Typography } from 'antd';
 import type { BaseType } from 'antd/lib/typography/Base';
-import React, { FC } from 'react';
+import React, { VFC } from 'react';
 import { Participants } from './Participants';
 
 const { Title, Text } = Typography;
@@ -25,7 +25,7 @@ const info = (label: string, value: string, type?: BaseType) => (
   </Space>
 );
 
-const CertificateDetail: FC = () => (
+const CertificateDetail: VFC = () => (
   <Row gutter={24}>
     <Col span={16}>
       <Card title={<Title level={3}>Workshop HTML</Title>} extra={buttons}>

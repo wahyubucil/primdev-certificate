@@ -6,7 +6,7 @@ import {
   LogoutOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import React, { FC, lazy, Suspense } from 'react';
+import React, { VFC, lazy, Suspense } from 'react';
 import { Link, Route, Switch, useRouteMatch } from 'react-router-dom';
 import './index.scss';
 import logo from '@/assets/logo-primakara-developers.svg';
@@ -25,7 +25,7 @@ const menu = (
   </Menu>
 );
 
-const Dashboard: FC = () => {
+const Dashboard: VFC = () => {
   const match = useRouteMatch();
 
   return (

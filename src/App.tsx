@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
+import React, { VFC } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Routes } from './Routes';
 
-const App: FC = () => (
+const App: VFC = () => (
   <Router>
     <Routes />
   </Router>

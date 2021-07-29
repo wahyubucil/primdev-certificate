@@ -1,7 +1,7 @@
 import { Spin } from 'antd';
-import React, { FC } from 'react';
+import React, { VFC } from 'react';
 
-export const Loader: FC = () => (
+export const Loader: VFC = () => (
   <Spin>
     <div style={{ width: '100%', height: '100vh' }}></div>
   </Spin>

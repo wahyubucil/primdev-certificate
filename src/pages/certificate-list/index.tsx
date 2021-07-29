@@ -1,5 +1,5 @@
 import { Button, List, Row, Space } from 'antd';
-import React, { FC } from 'react';
+import React, { VFC } from 'react';
 import type { Certificate } from '@/interfaces/Certificate';
 import { CertificateCard } from './CertificateCard';
 import { PlusOutlined } from '@ant-design/icons';
@@ -23,7 +23,7 @@ const sampleData: Certificate[] = [
   },
 ];
 
-const CertificateList: FC = () => (
+const CertificateList: VFC = () => (
   <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
     <Row justify="space-between">
       <h1>Certificate List</h1>

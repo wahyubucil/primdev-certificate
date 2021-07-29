@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { VFC } from 'react';
 import { Link } from 'react-router-dom';
 import type { Certificate } from '@/interfaces/Certificate';
 import { Card, Col, Row, Space, Typography } from 'antd';
@@ -6,7 +6,7 @@ import './CertificateCard.scss';
 
 const { Text } = Typography;
 
-export const CertificateCard: FC<{ data: Certificate }> = ({ data }) => (
+export const CertificateCard: VFC<{ data: Certificate }> = ({ data }) => (
   <Link to={`/dashboard/${data.id}`} className="CertificateCard">
     <Card title={data.name} extra={`Code: ${data.id}`}>
       <Space direction="vertical">
