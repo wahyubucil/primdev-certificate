@@ -2,7 +2,7 @@ import { CopyrightOutlined, GithubOutlined } from '@ant-design/icons';
 import React, { VFC } from 'react';
 import './Footer.scss';
 
-export const Footer: VFC<{ withPadding: boolean }> = ({
+export const Footer: VFC<{ withPadding?: boolean }> = ({
   withPadding = true,
 }) => (
   <div className={withPadding ? 'Footer Footer--with-padding' : 'Footer'}>
