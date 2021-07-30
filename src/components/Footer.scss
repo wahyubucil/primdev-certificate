@@ -1,0 +1,26 @@
+.Footer {
+  color: rgba(0, 0, 0, 0.45);
+  text-align: center;
+  width: 100%;
+
+  &--with-padding {
+    padding: 24px 0;
+  }
+
+  a {
+    color: rgba(0, 0, 0, 0.45);
+    transition: all 0.3s;
+  }
+
+  a:hover {
+    color: rgba(0, 0, 0, 0.85);
+  }
+
+  &__links {
+    margin-bottom: 8px;
+
+    a:nth-child(2) {
+      margin: 0 40px;
+    }
+  }
+}
