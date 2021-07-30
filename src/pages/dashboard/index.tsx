@@ -1,4 +1,4 @@
-import { Avatar, Col, Dropdown, Layout, Menu, Row } from 'antd';
+import { Alert, Avatar, Col, Dropdown, Layout, Menu, Row } from 'antd';
 import {
   CopyrightOutlined,
   DownOutlined,
@@ -53,12 +53,14 @@ const Dashboard: VFC = () => {
         </Row>
       </Header>
       <Content className="Dashboard__content">
-        <Suspense fallback={<Loader />}>
-          <Switch>
-            <Route path={`${match.path}/:id`} component={CertificateDetail} />
-            <Route path={match.path} component={CertificateList} />
-          </Switch>
-        </Suspense>
+        <Alert.ErrorBoundary>
+          <Suspense fallback={<Loader />}>
+            <Switch>
+              <Route path={`${match.path}/:id`} component={CertificateDetail} />
+              <Route path={match.path} component={CertificateList} />
+            </Switch>
+          </Suspense>
+        </Alert.ErrorBoundary>
       </Content>
       <Footer className="Dashboard__footer">
         <div className="Dashboard__footer-links">
