@@ -4,9 +4,16 @@
 
 ## Table of contents
 
+- [Prerequisites](#prerequisites)
 - [Setup](#setup)
+- [Development](#development)
 - [Available Scripts](#available-scripts)
 - [Deployment](#deployment)
+
+## Prerequisites
+
+- NodeJs (>= 14.17.0)
+- NPM (>= 7.18.0)
 
 ## Setup
 
@@ -16,16 +23,40 @@
 npm install
 ```
 
-2. Create `.env` based on `.env.example` :
+2. Because this project uses Firebase, you need to [config Firebase](https://firebase.google.com/docs/web/setup) first. Copy firebase config example and fill it with your configuration :
+
+```bash
+cp src/firebase-config.example.json src/firebase-config.json
+```
+
+## Development
+
+If you want to run this project on your development machine, here's how:
+
+1. Run Hardhat network first :
+
+```bash
+npx hardhat node
+```
+
+2. On other terminal, deploy smart contract on the network :
+
+```bash
+npx hardhat run smart-contract/scripts/deploy.ts --network localhost
+```
+
+3. Create `.env` based on `.env.example` :
 
 ```bash
 cp .env.example .env
 ```
 
-3. Compile Smart Contracts :
+4. Change CONTRACT_ADDRESS on `.env` based on address returned by the deploy script.
+
+5. Run the Web App. Make sure the Hardhat network still running. In conclusion, you need two terminals to run this project. One for Hardhat network, and one for the Web App :
 
 ```bash
-npm run contract:compile
+npm start
 ```
 
 ## Available Scripts
@@ -74,4 +105,10 @@ If you hosted it yourself. Just run `npm run build` and upload the `build` folde
 
 ### Smart Contract
 
-Run `npx ts-node smart-contract/scripts/deploy.ts`. Make sure
+Here's how to deploy the smart contract. Make sure to change the NETWORK based on your network to deploy, eg. `ropsten`, `localhost`.
+
+```bash
+npx hardhat run smart-contract/scripts/deploy.ts --network NETWORK
+```
+
+This project uses Ropsten as the test network. So if you like to try using Ropsten too, just change ROPSTEN_PRIVATE_KEY with your account private key. After that, run the deploy script above with `ropsten` as the network.

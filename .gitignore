@@ -27,3 +27,6 @@ yarn-error.log*
 cache
 artifacts
 contract-types
+
+# Client App
+src/firebase-config.json
