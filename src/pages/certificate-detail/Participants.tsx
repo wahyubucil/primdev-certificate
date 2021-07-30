@@ -1,6 +1,8 @@
 import { CheckOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Input, Space, Typography } from 'antd';
-import React, { useEffect, useState, VFC } from 'react';
+import { Button, Input, message, Space, Typography } from 'antd';
+import type { MessageType } from 'antd/lib/message';
+import React, { useEffect, useRef, useState, VFC } from 'react';
+import { Prompt } from 'react-router-dom';
 
 export const Participants: VFC = () => {
   const [changeMode, setChangeMode] = useState(false);
@@ -18,7 +20,12 @@ export const Participants: VFC = () => {
     setParticipants(newParticipants);
   }
 
+  const hideMessage = useRef<MessageType>();
   useEffect(() => {
+    if (changeMode)
+      hideMessage.current = message.info("Don't forget to save changes!", 0);
+    else hideMessage.current?.();
+
     // It will not create more than one listener. See: https://stackoverflow.com/a/10364316
     const beforeUnloadListener = (e: BeforeUnloadEvent) => {
       if (changeMode) {
@@ -30,6 +37,7 @@ export const Participants: VFC = () => {
     window.addEventListener('beforeunload', beforeUnloadListener);
 
     return () => {
+      if (hideMessage.current) hideMessage.current();
       window.removeEventListener('beforeunload', beforeUnloadListener);
     };
   }, [changeMode]);
@@ -62,6 +70,10 @@ export const Participants: VFC = () => {
           ))}
         </Space>
       </div>
+      <Prompt
+        when={changeMode}
+        message="You have unsaved changes. Are you sure want to leave?"
+      />
     </>
   );
 };
