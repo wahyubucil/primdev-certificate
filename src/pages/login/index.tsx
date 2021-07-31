@@ -3,7 +3,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Typography } from 'antd';
 import to from 'await-to-js';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { useHistory } from 'react-router-dom';
+import { Redirect, useHistory, useLocation } from 'react-router-dom';
 import logo from '@/assets/logo-primakara-developers.svg';
 import { Footer } from '@/components/Footer';
 import './index.scss';
@@ -13,11 +13,17 @@ type FormValues = {
   password: string;
 };
 
-const auth = getAuth();
+type Location = ReturnType<typeof useLocation>;
 
 const Login: VFC = () => {
   const [loading, setLoading] = useState(false);
   const history = useHistory();
+  const location = useLocation<{ from: Location }>();
+
+  const auth = getAuth();
+  if (auth.currentUser !== null) {
+    return <Redirect to="/dashboard" />;
+  }
 
   async function doLogin({ email, password }: FormValues) {
     if (loading) return;
@@ -31,7 +37,8 @@ const Login: VFC = () => {
       return;
     }
 
-    history.push('/dashboard');
+    const from = location.state?.from ?? { pathname: '/dashboard' };
+    history.replace(from);
   }
 
   return (
