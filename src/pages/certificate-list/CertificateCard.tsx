@@ -1,14 +1,14 @@
 import React, { VFC } from 'react';
 import { Link } from 'react-router-dom';
-import type { Certificate } from '@/interfaces/Certificate';
+import type { Certificate } from '@/models/Certificate';
 import { Card, Col, Row, Space, Typography } from 'antd';
 import './CertificateCard.scss';
 
 const { Text } = Typography;
 
 export const CertificateCard: VFC<{ data: Certificate }> = ({ data }) => (
-  <Link to={`/dashboard/${data.id}`} className="CertificateCard">
-    <Card title={data.name} extra={`Code: ${data.id}`}>
+  <Link to={`/dashboard/${data.code}`} className="CertificateCard">
+    <Card title={data.name} extra={`Code: ${data.code}`}>
       <Space direction="vertical">
         <Row justify="space-between">
           <Col>Status</Col>

@@ -18,7 +18,7 @@ import dayjs, { Dayjs } from 'dayjs';
 interface Values {
   code: number;
   name: string;
-  expiredAt: Dayjs;
+  expiredAt?: Dayjs;
 }
 
 interface FuncProps {

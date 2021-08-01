@@ -7,10 +7,8 @@ import {
   onSnapshot,
   orderBy,
   query,
-  Timestamp,
 } from 'firebase/firestore';
-import dayjs from 'dayjs';
-import type { Certificate } from '@/interfaces/Certificate';
+import { Certificate } from '@/models/Certificate';
 import { CertificateCard } from './CertificateCard';
 import { ModalCertificateForm } from '@/components/ModalCertificateForm';
 
@@ -23,18 +21,10 @@ const CertificateList: VFC = () => {
     const q = query(collection(db, 'certificates'), orderBy('code'));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       setLoading(false);
-      const newCertificates: Certificate[] = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          code: data.code,
-          name: data.name,
-          expiredAt: data.expiredAt
-            ? dayjs((data.expiredAt as Timestamp).toDate())
-            : null,
-          participants: data.participants,
-        };
-      });
-      setCertificates(newCertificates);
+      const data: Certificate[] = querySnapshot.docs.map((doc) =>
+        Certificate.fromFirestore(doc.data()),
+      );
+      setCertificates(data);
     });
 
     return () => unsubscribe();
