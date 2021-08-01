@@ -74,6 +74,7 @@ export const ModalCertificateForm: ModalCertificateFormInterface = ({
         ? Timestamp.fromDate(values.expiredAt.toDate())
         : null,
       createdAt: serverTimestamp(),
+      participants: [],
     });
     setLoading(false);
     message.success(`Certificate ${isEdit ? 'updated' : 'created'}`);

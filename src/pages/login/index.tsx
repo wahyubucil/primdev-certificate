@@ -22,7 +22,6 @@ const Login: VFC = () => {
   const auth = useAuth();
 
   async function doLogin({ email, password }: FormValues) {
-    if (loading) return;
     setLoading(true);
 
     const [err] = await to(auth.login(email, password));
@@ -48,11 +47,7 @@ const Login: VFC = () => {
         <Typography.Title level={3} className="Login__title">
           Dashboard Login
         </Typography.Title>
-        <Form
-          className="Login__form"
-          onFinish={doLogin}
-          validateTrigger={'onBlur'}
-        >
+        <Form className="Login__form" onFinish={doLogin}>
           <Form.Item
             name="email"
             rules={[{ required: true }, { type: 'email' }]}
