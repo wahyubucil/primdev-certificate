@@ -3,6 +3,7 @@ import React, { VFC } from 'react';
 import type { Certificate } from '@/interfaces/Certificate';
 import { CertificateCard } from './CertificateCard';
 import { PlusOutlined } from '@ant-design/icons';
+import { ModalCertificateForm } from '@/components/ModalCertificateForm';
 
 const sampleData: Certificate[] = [
   {
@@ -23,24 +24,31 @@ const sampleData: Certificate[] = [
   },
 ];
 
-const CertificateList: VFC = () => (
-  <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-    <Row justify="space-between">
-      <h1>Certificate List</h1>
-      <Button type="primary" icon={<PlusOutlined />} size="large">
-        Create
-      </Button>
-    </Row>
-    <List
-      dataSource={sampleData}
-      grid={{ gutter: 16, column: 3 }}
-      renderItem={(item) => (
-        <List.Item key={item.id}>
-          <CertificateCard data={item} />
-        </List.Item>
-      )}
-    />
-  </Space>
-);
+const CertificateList: VFC = () => {
+  return (
+    <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
+      <Row justify="space-between">
+        <h1>Certificate List</h1>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          size="large"
+          onClick={() => ModalCertificateForm.show()}
+        >
+          Create
+        </Button>
+      </Row>
+      <List
+        dataSource={sampleData}
+        grid={{ gutter: 16, column: 3 }}
+        renderItem={(item) => (
+          <List.Item key={item.id}>
+            <CertificateCard data={item} />
+          </List.Item>
+        )}
+      />
+    </Space>
+  );
+};
 
 export default CertificateList;
