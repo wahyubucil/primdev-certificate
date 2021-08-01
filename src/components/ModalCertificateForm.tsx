@@ -1,13 +1,20 @@
-import React, { VFC } from 'react';
+import React, { useState, VFC } from 'react';
 import ReactDOM from 'react-dom';
-import { Form, Input, InputNumber, Modal } from 'antd';
+import { Form, Input, InputNumber, message, Modal } from 'antd';
+import {
+  addDoc,
+  collection,
+  getFirestore,
+  serverTimestamp,
+  Timestamp,
+} from 'firebase/firestore';
 import { DatePicker } from './DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
 
 interface Values {
   code: number;
   name: string;
-  expiredAt: Date;
+  expiredAt: Dayjs;
 }
 
 interface FuncProps {
@@ -30,26 +37,47 @@ export const ModalCertificateForm: ModalCertificateFormInterface = ({
   afterClose,
   data,
   onCancel,
+  onSuccess,
 }) => {
+  const isEdit = data !== undefined;
+  const [loading, setLoading] = useState(false);
+
   function disabledDate(current: Dayjs) {
     return current.isSameOrBefore(dayjs());
+  }
+
+  const db = getFirestore();
+  async function onFinish(values: Values) {
+    setLoading(true);
+    await addDoc(collection(db, 'certificates'), {
+      code: values.code,
+      name: values.name,
+      expiredAt: values.expiredAt
+        ? Timestamp.fromDate(values.expiredAt.toDate())
+        : null,
+      createdAt: serverTimestamp(),
+    });
+    setLoading(false);
+    message.success(`Certificate ${isEdit ? 'updated' : 'created'}`);
+    if (onSuccess) onSuccess(values);
   }
 
   return (
     <Modal
       visible={visible}
-      title={data ? 'Edit certificate' : 'Create a new certificate'}
-      okText={data ? 'Update' : 'Create'}
+      title={isEdit ? 'Edit certificate' : 'Create a new certificate'}
+      okText={isEdit ? 'Update' : 'Create'}
       cancelText="Cancel"
-      onCancel={onCancel}
+      onCancel={loading ? undefined : onCancel}
       okButtonProps={{ htmlType: 'submit', form: 'form_certificate' }}
       afterClose={afterClose}
+      confirmLoading={loading}
     >
       <Form
         layout="vertical"
         name="form_certificate"
         requiredMark="optional"
-        onFinish={console.log}
+        onFinish={onFinish}
       >
         <Form.Item name="code" label="Code" rules={[{ required: true }]}>
           <InputNumber min={1} />
