@@ -52,7 +52,11 @@ const Login: VFC = () => {
         <Typography.Title level={3} className="Login__title">
           Dashboard Login
         </Typography.Title>
-        <Form className="Login__form" onFinish={doLogin}>
+        <Form
+          className="Login__form"
+          onFinish={doLogin}
+          validateTrigger={'onBlur'}
+        >
           <Form.Item
             name="email"
             rules={[{ required: true }, { type: 'email' }]}

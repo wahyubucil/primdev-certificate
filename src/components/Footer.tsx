@@ -1,11 +1,14 @@
 import { CopyrightOutlined, GithubOutlined } from '@ant-design/icons';
+import classNames from 'classnames';
 import React, { VFC } from 'react';
 import './Footer.scss';
 
 export const Footer: VFC<{ withPadding?: boolean }> = ({
   withPadding = true,
 }) => (
-  <div className={withPadding ? 'Footer Footer--with-padding' : 'Footer'}>
+  <div
+    className={classNames(['Footer', { 'Footer--with-padding': withPadding }])}
+  >
     <div className="Footer__links">
       <a
         target="_blank"
