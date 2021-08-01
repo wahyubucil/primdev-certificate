@@ -2,10 +2,10 @@ import React, { useState, VFC } from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Typography } from 'antd';
 import to from 'await-to-js';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { Redirect, useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import logo from '@/assets/logo-primakara-developers.svg';
 import { Footer } from '@/components/Footer';
+import { useAuth } from '@/hooks/useAuth';
 import './index.scss';
 
 type FormValues = {
@@ -19,20 +19,16 @@ const Login: VFC = () => {
   const [loading, setLoading] = useState(false);
   const history = useHistory();
   const location = useLocation<{ from: Location }>();
-
-  const auth = getAuth();
-  if (auth.currentUser !== null) {
-    return <Redirect to="/dashboard" />;
-  }
+  const auth = useAuth();
 
   async function doLogin({ email, password }: FormValues) {
     if (loading) return;
     setLoading(true);
 
-    const [err] = await to(signInWithEmailAndPassword(auth, email, password));
-    setLoading(false);
+    const [err] = await to(auth.login(email, password));
 
     if (err) {
+      setLoading(false);
       message.error('Email / Password incorrect');
       return;
     }

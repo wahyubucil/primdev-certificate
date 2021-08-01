@@ -1,18 +1,12 @@
 import { Alert, Avatar, Col, Dropdown, Layout, Menu, Row } from 'antd';
 import { DownOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import React, { VFC, lazy, Suspense } from 'react';
-import {
-  Link,
-  Route,
-  Switch,
-  useHistory,
-  useRouteMatch,
-} from 'react-router-dom';
+import { Link, Route, Switch, useRouteMatch } from 'react-router-dom';
 import './index.scss';
 import logo from '@/assets/logo-primakara-developers.svg';
 import { Loader } from '@/components/Loader';
 import { Footer } from '@/components/Footer';
-import { getAuth, signOut } from 'firebase/auth';
+import { useAuth } from '@/hooks/useAuth';
 
 const CertificateList = lazy(() => import('../certificate-list'));
 const CertificateDetail = lazy(() => import('../certificate-detail'));
@@ -20,18 +14,12 @@ const CertificateDetail = lazy(() => import('../certificate-detail'));
 const { Header, Content, Footer: AntdFooter } = Layout;
 
 const Dashboard: VFC = () => {
-  const auth = getAuth();
-  const history = useHistory();
+  const auth = useAuth();
   const match = useRouteMatch();
-
-  async function logout() {
-    await signOut(auth);
-    history.replace('/login');
-  }
 
   const menu = (
     <Menu>
-      <Menu.Item icon={<LogoutOutlined />} key="logout" onClick={logout}>
+      <Menu.Item icon={<LogoutOutlined />} key="logout" onClick={auth.logout}>
         Logout
       </Menu.Item>
     </Menu>
