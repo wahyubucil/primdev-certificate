@@ -4,9 +4,13 @@ import { Form, Input, InputNumber, message, Modal } from 'antd';
 import {
   addDoc,
   collection,
+  getDocs,
   getFirestore,
+  limit,
+  query,
   serverTimestamp,
   Timestamp,
+  where,
 } from 'firebase/firestore';
 import { DatePicker } from './DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
@@ -49,6 +53,20 @@ export const ModalCertificateForm: ModalCertificateFormInterface = ({
   const db = getFirestore();
   async function onFinish(values: Values) {
     setLoading(true);
+
+    // Check if there is a certificate with the same code
+    const q = query(
+      collection(db, 'certificates'),
+      where('code', '==', values.code),
+      limit(1),
+    );
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.size > 0) {
+      message.error('Code is already used!');
+      setLoading(false);
+      return;
+    }
+
     await addDoc(collection(db, 'certificates'), {
       code: values.code,
       name: values.name,
