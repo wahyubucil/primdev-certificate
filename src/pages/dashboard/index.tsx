@@ -1,7 +1,14 @@
-import { Alert, Avatar, Col, Dropdown, Layout, Menu, Row } from 'antd';
-import { DownOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
-import React, { VFC, lazy, Suspense } from 'react';
+import { Alert, Avatar, Col, Dropdown, Layout, Menu, Row, Spin } from 'antd';
+import {
+  DownOutlined,
+  LoadingOutlined,
+  LogoutOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import React, { VFC, lazy, Suspense, useEffect, useState } from 'react';
 import { Link, Route, Switch, useRouteMatch } from 'react-router-dom';
+import type { User } from 'firebase/auth';
+import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import './index.scss';
 import logo from '@/assets/logo-primakara-developers.svg';
 import { Loader } from '@/components/Loader';
@@ -16,6 +23,22 @@ const { Header, Content, Footer: AntdFooter } = Layout;
 const Dashboard: VFC = () => {
   const auth = useAuth();
   const match = useRouteMatch();
+
+  // Get display name
+  const [displayName, setDisplayName] = useState<string>();
+  const db = getFirestore();
+  useEffect(() => {
+    const user = auth.user as User;
+    if (user.displayName) {
+      setDisplayName(user.displayName);
+    } else {
+      const docRef = doc(db, 'users', user.uid);
+      getDoc(docRef).then((docSnap) => {
+        if (!docSnap.exists()) return;
+        setDisplayName(docSnap.data().displayName);
+      });
+    }
+  }, [auth, db]);
 
   const menu = (
     <Menu>
@@ -42,7 +65,9 @@ const Dashboard: VFC = () => {
             <Dropdown overlay={menu} placement="bottomRight">
               <div className="Dashboard__header-menu">
                 <Avatar className="Dashboard__avatar" icon={<UserOutlined />} />
-                <span className="Dashboard__user">Administrator</span>
+                <span className="Dashboard__user">
+                  {displayName || <Spin indicator={<LoadingOutlined spin />} />}
+                </span>
                 <DownOutlined />
               </div>
             </Dropdown>
