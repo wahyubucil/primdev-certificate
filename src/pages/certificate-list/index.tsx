@@ -5,7 +5,6 @@ import {
   collection,
   getFirestore,
   onSnapshot,
-  orderBy,
   query,
 } from 'firebase/firestore';
 import { Certificate } from '@/models/Certificate';
@@ -18,11 +17,11 @@ const CertificateList: VFC = () => {
   const db = getFirestore();
 
   useEffect(() => {
-    const q = query(collection(db, 'certificates'), orderBy('code'));
+    const q = query(collection(db, 'certificates'));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       setLoading(false);
       const data: Certificate[] = querySnapshot.docs.map((doc) =>
-        Certificate.fromFirestore(doc.data()),
+        Certificate.fromFirestore(doc.id, doc.data()),
       );
       setCertificates(data);
     });

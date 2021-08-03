@@ -7,6 +7,7 @@ import { Prompt } from 'react-router-dom';
 export const Participants: VFC = () => {
   const [changeMode, setChangeMode] = useState(false);
   const [participants, setParticipants] = useState<string[]>(['']);
+  const nonEmptyParticipants = participants.filter((e) => e !== '');
 
   function onChangeName(value: string, idx: number) {
     let newParticipants = [...participants];
@@ -46,7 +47,7 @@ export const Participants: VFC = () => {
     <>
       <Space style={{ marginTop: 24 }}>
         <Typography.Text strong>
-          Participants ({participants.filter((e) => e !== '').length})
+          Participants ({nonEmptyParticipants.length})
         </Typography.Text>
         <Button
           icon={changeMode ? <CheckOutlined /> : <EditOutlined />}
@@ -59,15 +60,17 @@ export const Participants: VFC = () => {
       </Space>
       <div style={{ marginTop: 8 }}>
         <Space direction="vertical" style={{ display: 'flex' }}>
-          {participants.map((participant, idx) => (
-            <Input
-              placeholder="Participant Name"
-              key={idx}
-              value={participant}
-              readOnly={!changeMode}
-              onChange={(e) => onChangeName(e.target.value, idx)}
-            />
-          ))}
+          {(changeMode ? participants : nonEmptyParticipants).map(
+            (participant, idx) => (
+              <Input
+                placeholder="Participant Name"
+                key={idx}
+                value={participant}
+                readOnly={!changeMode}
+                onChange={(e) => onChangeName(e.target.value, idx)}
+              />
+            ),
+          )}
         </Space>
       </div>
       <Prompt

@@ -2,15 +2,12 @@ import React, { useState, VFC } from 'react';
 import ReactDOM from 'react-dom';
 import { Form, Input, InputNumber, message, Modal } from 'antd';
 import {
-  addDoc,
-  collection,
-  getDocs,
+  doc,
+  getDoc,
   getFirestore,
-  limit,
-  query,
   serverTimestamp,
+  setDoc,
   Timestamp,
-  where,
 } from 'firebase/firestore';
 import { DatePicker } from './DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
@@ -54,28 +51,26 @@ export const ModalCertificateForm: ModalCertificateFormInterface = ({
   async function onFinish(values: Values) {
     setLoading(true);
 
+    const docRef = doc(db, 'certificates', values.code.toString());
+
     // Check if there is a certificate with the same code
-    const q = query(
-      collection(db, 'certificates'),
-      where('code', '==', values.code),
-      limit(1),
-    );
-    const querySnapshot = await getDocs(q);
-    if (querySnapshot.size > 0) {
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
       message.error('Code is already used!');
       setLoading(false);
       return;
     }
 
-    await addDoc(collection(db, 'certificates'), {
-      code: values.code,
+    await setDoc(docRef, {
       name: values.name,
       expiredAt: values.expiredAt
         ? Timestamp.fromDate(values.expiredAt.toDate())
         : null,
       createdAt: serverTimestamp(),
       participants: [],
+      revoked: false,
     });
+
     setLoading(false);
     message.success(`Certificate ${isEdit ? 'updated' : 'created'}`);
     if (onSuccess) onSuccess(values);
