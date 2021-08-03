@@ -8,7 +8,6 @@
     "baseUrl": "./",
     /* paths - import rewriting/resolving */
     "paths": {
-      "~/contract-types": ["../contract-types"],
       "@/*": ["./*"]
     },
     /* noEmit - Snowpack builds (emits) files, not tsc. */

@@ -26,7 +26,7 @@ yarn-error.log*
 # Hardhat files
 cache
 artifacts
-contract-types
+src/contract-types
 
 # Client App
 src/firebase-config.json

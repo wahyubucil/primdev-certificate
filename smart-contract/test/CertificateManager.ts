@@ -1,7 +1,10 @@
 import type { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
-import { CertificateManager } from '~/contract-types';
+import type {
+  CertificateManager,
+  CertificateManager__factory,
+} from '../../src/contract-types';
 import {
   defineTestData,
   oneYearFromNow,
@@ -25,10 +28,10 @@ describe('CertificateManager', function () {
   });
 
   beforeEach(async function () {
-    const CertificateManager = await ethers.getContractFactory(
+    const CertificateManager = (await ethers.getContractFactory(
       'CertificateManager',
       owner,
-    );
+    )) as CertificateManager__factory;
     certificateManager = await CertificateManager.deploy();
     await certificateManager.deployed();
   });

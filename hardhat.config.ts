@@ -1,15 +1,15 @@
-import "@nomiclabs/hardhat-waffle";
-import "@typechain/hardhat";
-import chai from "chai";
-import chaiAsPromised from "chai-as-promised";
-import chaiBn from "chai-bn";
-import BN from "bn.js";
-import { task, HardhatUserConfig } from "hardhat/config";
+import '@nomiclabs/hardhat-waffle';
+import '@typechain/hardhat';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import chaiBn from 'chai-bn';
+import BN from 'bn.js';
+import { task, HardhatUserConfig } from 'hardhat/config';
 
 chai.use(chaiAsPromised);
 chai.use(chaiBn(BN));
 
-task("accounts", "Prints the list of accounts", async (_, hre) => {
+task('accounts', 'Prints the list of accounts', async (_, hre) => {
   const accounts = await hre.ethers.getSigners();
 
   for (const [idx, account] of accounts.entries()) {
@@ -22,15 +22,15 @@ task("accounts", "Prints the list of accounts", async (_, hre) => {
 });
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.6",
+  solidity: '0.8.6',
   paths: {
-    sources: "./smart-contract/contracts",
-    tests: "./smart-contract/test",
-    cache: "./smart-contract/cache",
-    artifacts: "./smart-contract/artifacts",
+    sources: './smart-contract/contracts',
+    tests: './smart-contract/test',
+    cache: './smart-contract/cache',
+    artifacts: './smart-contract/artifacts',
   },
   typechain: {
-    outDir: "./contract-types",
+    outDir: './src/contract-types',
   },
 };
 

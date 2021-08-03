@@ -5,15 +5,8 @@
     "strict": true,
     "esModuleInterop": true,
     "outDir": "dist",
-    "resolveJsonModule": true,
-    "paths": {
-      "~/contract-types": ["./contract-types"]
-    }
+    "resolveJsonModule": true
   },
-  "include": [
-    "smart-contract/scripts",
-    "smart-contract/test",
-    "./contract-types"
-  ],
+  "include": ["smart-contract/scripts", "smart-contract/test"],
   "files": ["./hardhat.config.ts"]
 }

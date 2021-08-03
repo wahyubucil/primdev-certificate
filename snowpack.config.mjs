@@ -23,7 +23,6 @@ export default {
     ],
   ],
   alias: {
-    '~/contract-types': './contract-types',
     '@': './src',
   },
   routes: [
