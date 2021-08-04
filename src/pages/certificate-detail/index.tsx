@@ -1,6 +1,4 @@
-import { Loader } from '@/components/Loader';
-import { ModalCertificateForm } from '@/components/ModalCertificateForm';
-import { Certificate } from '@/models/Certificate';
+import React, { useEffect, useState, VFC } from 'react';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -26,8 +24,11 @@ import {
   onSnapshot,
   updateDoc,
 } from 'firebase/firestore';
-import React, { useEffect, useState, VFC } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import { Loader } from '@/components/Loader';
+import { MetaMaskDetector } from '@/components/MetaMaskDetector';
+import { ModalCertificateForm } from '@/components/ModalCertificateForm';
+import { Certificate } from '@/models/Certificate';
 import { BlockchainInfo } from './BlockchainInfo';
 import { Participants } from './Participants';
 
@@ -146,43 +147,46 @@ const CertificateDetail: VFC = () => {
   );
 
   return (
-    <Row gutter={24}>
-      <Col span={16}>
-        <Card
-          title={<Title level={3}>{certificate.name}</Title>}
-          extra={buttons}
-        >
-          <Row justify="space-between">
-            <Col>{info('Code', certificate.code.toString())}</Col>
-            <Col>
-              {info(
-                'Status',
-                certificate.status,
-                certificate.status === 'Available' ? 'success' : 'danger',
-              )}
-            </Col>
-            <Col>
-              {info(
-                'Expired',
-                certificate.expiredAt
-                  ? certificate.expiredAt.format('DD MMMM YYYY')
-                  : 'None',
-                certificate.status === 'Expired' ? 'danger' : undefined,
-              )}
-            </Col>
-          </Row>
-          <Participants
-            code={certificate.code}
-            data={certificate.participants}
-          />
-        </Card>
-      </Col>
-      <Col span={8}>
-        <Card title="Blockchain Information">
-          <BlockchainInfo />
-        </Card>
-      </Col>
-    </Row>
+    <>
+      <MetaMaskDetector style={{ marginBottom: 16 }} />
+      <Row gutter={24}>
+        <Col span={16}>
+          <Card
+            title={<Title level={3}>{certificate.name}</Title>}
+            extra={buttons}
+          >
+            <Row justify="space-between">
+              <Col>{info('Code', certificate.code.toString())}</Col>
+              <Col>
+                {info(
+                  'Status',
+                  certificate.status,
+                  certificate.status === 'Available' ? 'success' : 'danger',
+                )}
+              </Col>
+              <Col>
+                {info(
+                  'Expired',
+                  certificate.expiredAt
+                    ? certificate.expiredAt.format('DD MMMM YYYY')
+                    : 'None',
+                  certificate.status === 'Expired' ? 'danger' : undefined,
+                )}
+              </Col>
+            </Row>
+            <Participants
+              code={certificate.code}
+              data={certificate.participants}
+            />
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card title="Blockchain Information">
+            <BlockchainInfo />
+          </Card>
+        </Col>
+      </Row>
+    </>
   );
 };
 

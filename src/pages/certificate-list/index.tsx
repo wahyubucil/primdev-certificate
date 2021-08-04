@@ -1,12 +1,12 @@
 import React, { useEffect, useState, VFC } from 'react';
-import { Alert, Button, List, Row, Space } from 'antd';
+import { Button, List, Row, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { collection, getDocs, getFirestore } from 'firebase/firestore';
 import { useHistory } from 'react-router-dom';
 import { Certificate } from '@/models/Certificate';
 import { ModalCertificateForm } from '@/components/ModalCertificateForm';
-import { useMetaMask } from '@/hooks/useMetaMask';
 import { CertificateCard } from './CertificateCard';
+import { MetaMaskDetector } from '@/components/MetaMaskDetector';
 
 const CertificateList: VFC = () => {
   const [certificates, setCertificates] = useState<Certificate[]>();
@@ -22,8 +22,6 @@ const CertificateList: VFC = () => {
       setCertificates(data);
     });
   }, [db]);
-
-  const { error } = useMetaMask();
 
   const history = useHistory();
   function showModalCreate() {
@@ -45,25 +43,7 @@ const CertificateList: VFC = () => {
           Create
         </Button>
       </Row>
-      {error && (
-        <Alert
-          type="warning"
-          message={error.message}
-          showIcon
-          action={
-            error.code === 'notInstalled' && (
-              <Button
-                size="small"
-                type="link"
-                href="https://metamask.io/download.html"
-                target="_blank"
-              >
-                Install
-              </Button>
-            )
-          }
-        />
-      )}
+      <MetaMaskDetector />
       <List
         dataSource={certificates}
         loading={loading}
