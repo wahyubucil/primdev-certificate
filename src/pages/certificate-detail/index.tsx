@@ -19,7 +19,13 @@ import {
   Typography,
 } from 'antd';
 import type { BaseType } from 'antd/lib/typography/Base';
-import { doc, getFirestore, onSnapshot, updateDoc } from 'firebase/firestore';
+import {
+  deleteDoc,
+  doc,
+  getFirestore,
+  onSnapshot,
+  updateDoc,
+} from 'firebase/firestore';
 import React, { useEffect, useState, VFC } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { BlockchainInfo } from './BlockchainInfo';
@@ -90,6 +96,22 @@ const CertificateDetail: VFC = () => {
     });
   }
 
+  function remove(code: number) {
+    Modal.confirm({
+      title: 'Are you sure to remove this certificate?',
+      icon: <ExclamationCircleOutlined />,
+      content: "You won't be able to undo this action!",
+      okText: 'Yes',
+      okType: 'danger',
+      cancelText: 'No',
+      onOk: async () => {
+        const docRef = doc(db, 'certificates', code.toString());
+        await deleteDoc(docRef);
+        message.success('Certificate removed');
+      },
+    });
+  }
+
   const isNotRevoked = certificate.status !== 'Revoked';
   const buttons = (
     <Space>
@@ -110,7 +132,12 @@ const CertificateDetail: VFC = () => {
           Revoke
         </Button>
       )}
-      <Button icon={<DeleteOutlined />} danger type="primary">
+      <Button
+        icon={<DeleteOutlined />}
+        danger
+        type="primary"
+        onClick={() => remove(certificate.code)}
+      >
         Remove
       </Button>
     </Space>
