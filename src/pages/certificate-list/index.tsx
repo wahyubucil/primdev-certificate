@@ -1,5 +1,5 @@
 import React, { useEffect, useState, VFC } from 'react';
-import { Button, List, Row, Space } from 'antd';
+import { Alert, Button, List, Row, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   collection,
@@ -8,8 +8,9 @@ import {
   query,
 } from 'firebase/firestore';
 import { Certificate } from '@/models/Certificate';
-import { CertificateCard } from './CertificateCard';
 import { ModalCertificateForm } from '@/components/ModalCertificateForm';
+import { useMetaMask } from '@/hooks/useMetaMask';
+import { CertificateCard } from './CertificateCard';
 
 const CertificateList: VFC = () => {
   const [certificates, setCertificates] = useState<Certificate[]>();
@@ -29,6 +30,8 @@ const CertificateList: VFC = () => {
     return () => unsubscribe();
   }, [db]);
 
+  useMetaMask('readOnly');
+
   return (
     <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
       <Row justify="space-between">
@@ -42,6 +45,16 @@ const CertificateList: VFC = () => {
           Create
         </Button>
       </Row>
+      <Alert
+        type="warning"
+        message="Connect to MetaMask to enable the Blockchain feature"
+        showIcon
+        action={
+          <Button size="small" type="link">
+            Connect
+          </Button>
+        }
+      />
       <List
         dataSource={certificates}
         loading={loading}

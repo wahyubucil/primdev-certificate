@@ -1,11 +1,11 @@
-import { run, ethers } from 'hardhat';
+import { run, ethers, network } from 'hardhat';
 
 async function main() {
   await run('compile');
 
   const [deployer] = await ethers.getSigners();
   console.log('\nStart Deploy----------------------------------------');
-  console.log('Network:', ethers.getDefaultProvider().network.name);
+  console.log('Network:', network.name);
   console.log('Deploying contracts with the account:', deployer.address);
   const startingBalance = await deployer.getBalance();
   console.log(

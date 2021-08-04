@@ -53,6 +53,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
+    "@metamask/detect-provider": "^1.2.0",
     "@openzeppelin/contracts": "^4.2.0",
     "antd": "^4.16.9",
     "await-to-js": "^3.0.0",
