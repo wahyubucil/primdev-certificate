@@ -182,7 +182,7 @@ const CertificateDetail: VFC = () => {
         </Col>
         <Col span={8}>
           <Card title="Blockchain Information">
-            <BlockchainInfo />
+            <BlockchainInfo certificate={certificate} />
           </Card>
         </Col>
       </Row>
