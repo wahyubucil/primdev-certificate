@@ -96,7 +96,10 @@ const CertificateDetail: VFC = () => {
               )}
             </Col>
           </Row>
-          <Participants />
+          <Participants
+            code={certificate.code}
+            data={certificate.participants}
+          />
         </Card>
       </Col>
       <Col span={8}>

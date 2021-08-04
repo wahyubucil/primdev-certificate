@@ -1,12 +1,18 @@
 import { CheckOutlined, EditOutlined } from '@ant-design/icons';
 import { Button, Input, message, Space, Typography } from 'antd';
 import type { MessageType } from 'antd/lib/message';
+import { doc, getFirestore, updateDoc } from 'firebase/firestore';
 import React, { useEffect, useRef, useState, VFC } from 'react';
 import { Prompt } from 'react-router-dom';
 
-export const Participants: VFC = () => {
+interface ParticipantsProps {
+  code: number;
+  data: string[];
+}
+
+export const Participants: VFC<ParticipantsProps> = ({ code, data }) => {
   const [changeMode, setChangeMode] = useState(false);
-  const [participants, setParticipants] = useState<string[]>(['']);
+  const [participants, setParticipants] = useState([...data, '']);
   const nonEmptyParticipants = participants.filter((e) => e !== '');
 
   function onChangeName(value: string, idx: number) {
@@ -43,6 +49,19 @@ export const Participants: VFC = () => {
     };
   }, [changeMode]);
 
+  const [saveLoading, setSaveLoading] = useState(false);
+  const db = getFirestore();
+  async function save() {
+    if (changeMode) {
+      setSaveLoading(true);
+      const docRef = doc(db, 'certificates', code.toString());
+      await updateDoc(docRef, { participants: nonEmptyParticipants });
+      setSaveLoading(false);
+    }
+
+    setChangeMode(!changeMode);
+  }
+
   return (
     <>
       <Space style={{ marginTop: 24 }}>
@@ -52,7 +71,8 @@ export const Participants: VFC = () => {
         <Button
           icon={changeMode ? <CheckOutlined /> : <EditOutlined />}
           size="small"
-          onClick={() => setChangeMode(!changeMode)}
+          loading={saveLoading}
+          onClick={() => save()}
           type={changeMode ? 'primary' : 'default'}
         >
           {changeMode ? 'Save' : 'Change'}
