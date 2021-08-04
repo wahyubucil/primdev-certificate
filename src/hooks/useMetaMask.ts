@@ -33,13 +33,11 @@ interface Ethereumish extends NodeJS.EventEmitter {
 }
 
 interface ErrorState {
-  code: 'notInstalled' | 'multipleWallets' | 'notConnected' | 'unexpectedError';
+  code: 'notInstalled' | 'multipleWallets' | 'unexpectedError';
   message: string;
 }
 
-type MetaMaskFeature = 'readOnly' | 'readWrite';
-
-export function useMetaMask(feature: MetaMaskFeature) {
+export function useMetaMask() {
   const [error, setError] = useState<ErrorState | null>(null);
 
   const [ethereum, setEthereum] = useState<Ethereumish>();
@@ -64,16 +62,7 @@ export function useMetaMask(feature: MetaMaskFeature) {
   const [account, setAccount] = useState<string | null>(null);
 
   const handleAccountsChanged = useCallback((accounts: string[]) => {
-    if (accounts.length === 0) {
-      setError({
-        code: 'notConnected',
-        message:
-          "You're not connected to any accounts or your MetaMask is locked",
-      });
-    } else {
-      setError(null);
-      setAccount(accounts[0]);
-    }
+    if (accounts.length > 0) setAccount(accounts[0]);
   }, []);
 
   useEffect(() => {
@@ -81,22 +70,20 @@ export function useMetaMask(feature: MetaMaskFeature) {
 
     ethereum.on('chainChanged', () => window.location.reload());
 
-    if (feature === 'readWrite') {
-      ethereum
-        .request({ method: 'eth_accounts' })
-        .then((accounts) => {
-          handleAccountsChanged(accounts as string[]);
-          ethereum.on('accountsChanged', handleAccountsChanged);
-        })
-        .catch((err) => {
-          setError({ code: 'unexpectedError', message: err.message });
-        });
-    }
+    ethereum
+      .request({ method: 'eth_accounts' })
+      .then((accounts) => {
+        handleAccountsChanged(accounts as string[]);
+        ethereum.on('accountsChanged', handleAccountsChanged);
+      })
+      .catch((err) => {
+        setError({ code: 'unexpectedError', message: err.message });
+      });
 
     return () => {
       ethereum.removeAllListeners();
     };
-  }, [ethereum, handleAccountsChanged, feature]);
+  }, [ethereum, handleAccountsChanged]);
 
   return { error, provider, account, ethereum };
 }

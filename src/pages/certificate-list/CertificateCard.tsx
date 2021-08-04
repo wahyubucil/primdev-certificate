@@ -24,7 +24,7 @@ function blockchainStatusType(status: BlockchainStatus): BaseType | undefined {
 
 export const CertificateCard: VFC<{ data: Certificate }> = ({ data }) => {
   const [blockchainStatus, setBlockchainStatus] = useState<BlockchainStatus>();
-  const { error, provider } = useMetaMask('readOnly');
+  const { error, provider } = useMetaMask();
 
   useEffect(() => {
     if (error) {

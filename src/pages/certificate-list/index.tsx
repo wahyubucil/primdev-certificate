@@ -23,7 +23,7 @@ const CertificateList: VFC = () => {
     });
   }, [db]);
 
-  const { error } = useMetaMask('readOnly');
+  const { error } = useMetaMask();
 
   const history = useHistory();
   function showModalCreate() {
