@@ -7,6 +7,7 @@ import {
   onSnapshot,
   query,
 } from 'firebase/firestore';
+import { useHistory } from 'react-router-dom';
 import { Certificate } from '@/models/Certificate';
 import { ModalCertificateForm } from '@/components/ModalCertificateForm';
 import { useMetaMask } from '@/hooks/useMetaMask';
@@ -32,6 +33,13 @@ const CertificateList: VFC = () => {
 
   const { error } = useMetaMask('readOnly');
 
+  const history = useHistory();
+  function showModalCreate() {
+    ModalCertificateForm.show({
+      onSuccess: ({ code }) => history.push(`/dashboard/${code}`),
+    });
+  }
+
   return (
     <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
       <Row justify="space-between">
@@ -40,7 +48,7 @@ const CertificateList: VFC = () => {
           type="primary"
           icon={<PlusOutlined />}
           size="large"
-          onClick={() => ModalCertificateForm.show()}
+          onClick={showModalCreate}
         >
           Create
         </Button>

@@ -8,6 +8,7 @@ import {
   serverTimestamp,
   setDoc,
   Timestamp,
+  updateDoc,
 } from 'firebase/firestore';
 import { DatePicker } from './DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
@@ -54,24 +55,31 @@ export const ModalCertificateForm: ModalCertificateFormInterface = ({
     const docRef = doc(db, 'certificates', values.code.toString());
 
     if (!isEdit) {
-      // Check if there is a certificate with the same code on create
+      // Check if there is a certificate with the same code
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         message.error('Code is already used!');
         setLoading(false);
         return;
       }
-    }
 
-    await setDoc(docRef, {
-      name: values.name,
-      expiredAt: values.expiredAt
-        ? Timestamp.fromDate(values.expiredAt.toDate())
-        : null,
-      createdAt: serverTimestamp(),
-      participants: [],
-      revoked: false,
-    });
+      await setDoc(docRef, {
+        name: values.name,
+        expiredAt: values.expiredAt
+          ? Timestamp.fromDate(values.expiredAt.toDate())
+          : null,
+        createdAt: serverTimestamp(),
+        participants: [],
+        revoked: false,
+      });
+    } else {
+      await updateDoc(docRef, {
+        name: values.name,
+        expiredAt: values.expiredAt
+          ? Timestamp.fromDate(values.expiredAt.toDate())
+          : null,
+      });
+    }
 
     setLoading(false);
     message.success(`Certificate ${isEdit ? 'updated' : 'created'}`);

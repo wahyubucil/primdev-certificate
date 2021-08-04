@@ -1,10 +1,25 @@
 import { Loader } from '@/components/Loader';
 import { ModalCertificateForm } from '@/components/ModalCertificateForm';
 import { Certificate } from '@/models/Certificate';
-import { DeleteOutlined, EditOutlined, UndoOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Result, Row, Space, Typography } from 'antd';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+  UndoOutlined,
+} from '@ant-design/icons';
+import {
+  Button,
+  Card,
+  Col,
+  message,
+  Modal,
+  Result,
+  Row,
+  Space,
+  Typography,
+} from 'antd';
 import type { BaseType } from 'antd/lib/typography/Base';
-import { doc, getFirestore, onSnapshot } from 'firebase/firestore';
+import { doc, getFirestore, onSnapshot, updateDoc } from 'firebase/firestore';
 import React, { useEffect, useState, VFC } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { BlockchainInfo } from './BlockchainInfo';
@@ -59,17 +74,42 @@ const CertificateDetail: VFC = () => {
 
   if (!certificate) return <NotFound />;
 
+  function revoke(code: number) {
+    Modal.confirm({
+      title: 'Are you sure to revoke this certificate?',
+      icon: <ExclamationCircleOutlined />,
+      content: "You won't be able to edit the data once it's revoked!",
+      okText: 'Yes',
+      okType: 'danger',
+      cancelText: 'No',
+      onOk: async () => {
+        const docRef = doc(db, 'certificates', code.toString());
+        await updateDoc(docRef, { revoked: true });
+        message.success('Certificate revoked');
+      },
+    });
+  }
+
+  const isNotRevoked = certificate.status !== 'Revoked';
   const buttons = (
     <Space>
-      <Button
-        icon={<EditOutlined />}
-        onClick={() => ModalCertificateForm.show({ data: certificate })}
-      >
-        Edit
-      </Button>
-      <Button icon={<UndoOutlined />} danger>
-        Revoke
-      </Button>
+      {isNotRevoked && (
+        <Button
+          icon={<EditOutlined />}
+          onClick={() => ModalCertificateForm.show({ data: certificate })}
+        >
+          Edit
+        </Button>
+      )}
+      {isNotRevoked && (
+        <Button
+          icon={<UndoOutlined />}
+          danger
+          onClick={() => revoke(certificate.code)}
+        >
+          Revoke
+        </Button>
+      )}
       <Button icon={<DeleteOutlined />} danger type="primary">
         Remove
       </Button>
