@@ -1,5 +1,12 @@
 import detectEthereumProvider from '@metamask/detect-provider';
-import { useEffect, useState, useCallback } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  createContext,
+  FC,
+  useContext,
+} from 'react';
 import type {
   ProviderMessage,
   ProviderRpcError,
@@ -37,11 +44,38 @@ interface ErrorState {
   message: string;
 }
 
-export function useMetaMask() {
-  const [error, setError] = useState<ErrorState | null>(null);
+interface MetaMaskProvider {
+  error: ErrorState | null;
+  ethereum: Ethereumish | null;
+  provider: ethers.providers.Web3Provider | null;
+  account: string | null;
+}
 
-  const [ethereum, setEthereum] = useState<Ethereumish>();
+const metamaskContext = createContext<MetaMaskProvider | undefined>(undefined);
+
+export const ProvideMetaMask: FC = ({ children }) => {
+  const metaMask = useProvideMetaMask();
+  return (
+    <metamaskContext.Provider value={metaMask}>
+      {children}
+    </metamaskContext.Provider>
+  );
+};
+
+export function useMetaMask() {
+  const metaMask = useContext(metamaskContext);
+  if (!metaMask)
+    throw new Error(
+      'Please wrap parent component with `ProvideMetaMask` first!',
+    );
+  return metaMask;
+}
+
+function useProvideMetaMask(): MetaMaskProvider {
+  const [error, setError] = useState<ErrorState | null>(null);
+  const [ethereum, setEthereum] = useState<Ethereumish | null>(null);
   const provider = ethereum && new ethers.providers.Web3Provider(ethereum);
+  const [account, setAccount] = useState<string | null>(null);
 
   useEffect(() => {
     detectEthereumProvider().then((ethereumProvider) => {
@@ -58,8 +92,6 @@ export function useMetaMask() {
       }
     });
   }, []);
-
-  const [account, setAccount] = useState<string | null>(null);
 
   const handleAccountsChanged = useCallback((accounts: string[]) => {
     if (accounts.length > 0) setAccount(accounts[0]);
@@ -85,5 +117,5 @@ export function useMetaMask() {
     };
   }, [ethereum, handleAccountsChanged]);
 
-  return { error, provider, account, ethereum };
+  return { error, ethereum, provider, account };
 }
