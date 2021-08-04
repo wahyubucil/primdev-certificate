@@ -1,12 +1,49 @@
-import React, { VFC } from 'react';
+import React, { useEffect, useState, VFC } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, Col, Row, Space, Typography } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Card, Col, Row, Space, Spin, Typography } from 'antd';
+import type { BaseType } from 'antd/lib/typography/Base';
 import type { Certificate } from '@/models/Certificate';
+import { useMetaMask } from '@/hooks/useMetaMask';
+import { CertificateManager__factory } from '@/contract-types';
 import './CertificateCard.scss';
 
 const { Text } = Typography;
 
+type BlockchainStatus = 'Available' | 'Not available' | 'Not connected';
+function blockchainStatusType(status: BlockchainStatus): BaseType | undefined {
+  switch (status) {
+    case 'Available':
+      return 'success';
+    case 'Not available':
+      return 'danger';
+    default:
+      return undefined;
+  }
+}
+
 export const CertificateCard: VFC<{ data: Certificate }> = ({ data }) => {
+  const [blockchainStatus, setBlockchainStatus] = useState<BlockchainStatus>();
+  const { error, provider } = useMetaMask('readOnly');
+
+  useEffect(() => {
+    if (error) {
+      setBlockchainStatus('Not connected');
+      return;
+    }
+
+    if (!provider) return;
+
+    const certificateManager = CertificateManager__factory.connect(
+      import.meta.env.SNOWPACK_PUBLIC_CONTRACT_ADDRESS,
+      provider,
+    );
+    certificateManager
+      .getCertificate(data.code)
+      .then(() => setBlockchainStatus('Available'))
+      .catch(() => setBlockchainStatus('Not available'));
+  }, [error, provider, data]);
+
   return (
     <Link to={`/dashboard/${data.code}`} className="CertificateCard">
       <Card title={data.name} extra={`Code: ${data.code}`}>
@@ -32,7 +69,13 @@ export const CertificateCard: VFC<{ data: Certificate }> = ({ data }) => {
           <Row justify="space-between">
             <Col>Blockchain</Col>
             <Col>
-              <Text type="danger">Not available</Text>
+              {blockchainStatus ? (
+                <Text type={blockchainStatusType(blockchainStatus)}>
+                  {blockchainStatus}
+                </Text>
+              ) : (
+                <Spin indicator={<LoadingOutlined spin />} />
+              )}
             </Col>
           </Row>
         </Space>

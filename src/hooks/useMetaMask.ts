@@ -37,7 +37,9 @@ interface ErrorState {
   message: string;
 }
 
-export function useMetaMask(feature: 'readOnly' | 'readWrite') {
+type MetaMaskFeature = 'readOnly' | 'readWrite';
+
+export function useMetaMask(feature: MetaMaskFeature) {
   const [error, setError] = useState<ErrorState | null>(null);
 
   const [ethereum, setEthereum] = useState<Ethereumish>();

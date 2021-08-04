@@ -30,7 +30,7 @@ const CertificateList: VFC = () => {
     return () => unsubscribe();
   }, [db]);
 
-  useMetaMask('readOnly');
+  const { error } = useMetaMask('readOnly');
 
   return (
     <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
@@ -45,16 +45,26 @@ const CertificateList: VFC = () => {
           Create
         </Button>
       </Row>
-      <Alert
-        type="warning"
-        message="Connect to MetaMask to enable the Blockchain feature"
-        showIcon
-        action={
-          <Button size="small" type="link">
-            Connect
-          </Button>
-        }
-      />
+      {error && (
+        <Alert
+          type="warning"
+          message={error.message}
+          showIcon
+          action={
+            error.code === 'notInstalled' && (
+              <Button
+                size="small"
+                type="link"
+                onClick={() =>
+                  window.open('https://metamask.io/download.html', '_blank')
+                }
+              >
+                Install
+              </Button>
+            )
+          }
+        />
+      )}
       <List
         dataSource={certificates}
         loading={loading}
