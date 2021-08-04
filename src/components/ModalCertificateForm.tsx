@@ -15,7 +15,7 @@ import dayjs, { Dayjs } from 'dayjs';
 interface Values {
   code: number;
   name: string;
-  expiredAt?: Dayjs;
+  expiredAt?: Dayjs | null;
 }
 
 interface FuncProps {
@@ -53,12 +53,14 @@ export const ModalCertificateForm: ModalCertificateFormInterface = ({
 
     const docRef = doc(db, 'certificates', values.code.toString());
 
-    // Check if there is a certificate with the same code
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      message.error('Code is already used!');
-      setLoading(false);
-      return;
+    if (!isEdit) {
+      // Check if there is a certificate with the same code on create
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        message.error('Code is already used!');
+        setLoading(false);
+        return;
+      }
     }
 
     await setDoc(docRef, {
@@ -92,8 +94,14 @@ export const ModalCertificateForm: ModalCertificateFormInterface = ({
         name="form_certificate"
         requiredMark="optional"
         onFinish={onFinish}
+        initialValues={data}
       >
-        <Form.Item name="code" label="Code" rules={[{ required: true }]}>
+        <Form.Item
+          name="code"
+          label="Code"
+          rules={[{ required: true }]}
+          hidden={isEdit}
+        >
           <InputNumber min={1} />
         </Form.Item>
         <Form.Item name="name" label="Name" rules={[{ required: true }]}>
@@ -114,6 +122,7 @@ function show(config: FuncProps = {}) {
   document.body.appendChild(div);
 
   const defaultConfig: ModalProps = {
+    data: config.data,
     visible: true,
     onSuccess: (values) => {
       close();

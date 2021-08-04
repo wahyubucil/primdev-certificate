@@ -1,4 +1,5 @@
 import { Loader } from '@/components/Loader';
+import { ModalCertificateForm } from '@/components/ModalCertificateForm';
 import { Certificate } from '@/models/Certificate';
 import { DeleteOutlined, EditOutlined, UndoOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Result, Row, Space, Typography } from 'antd';
@@ -10,18 +11,6 @@ import { BlockchainInfo } from './BlockchainInfo';
 import { Participants } from './Participants';
 
 const { Title, Text } = Typography;
-
-const buttons = (
-  <Space>
-    <Button icon={<EditOutlined />}>Edit</Button>
-    <Button icon={<UndoOutlined />} danger>
-      Revoke
-    </Button>
-    <Button icon={<DeleteOutlined />} danger type="primary">
-      Remove
-    </Button>
-  </Space>
-);
 
 const info = (label: string, value: string, type?: BaseType) => (
   <Space size="middle">
@@ -69,6 +58,23 @@ const CertificateDetail: VFC = () => {
   if (loading) return <Loader />;
 
   if (!certificate) return <NotFound />;
+
+  const buttons = (
+    <Space>
+      <Button
+        icon={<EditOutlined />}
+        onClick={() => ModalCertificateForm.show({ data: certificate })}
+      >
+        Edit
+      </Button>
+      <Button icon={<UndoOutlined />} danger>
+        Revoke
+      </Button>
+      <Button icon={<DeleteOutlined />} danger type="primary">
+        Remove
+      </Button>
+    </Space>
+  );
 
   return (
     <Row gutter={24}>
