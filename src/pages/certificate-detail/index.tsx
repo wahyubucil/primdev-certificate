@@ -60,6 +60,7 @@ const NotFound: VFC = () => {
 const CertificateDetail: VFC = () => {
   const { code } = useParams<{ code: string }>();
   const db = getFirestore();
+  const history = useHistory();
 
   const [certificate, setCertificate] = useState<Certificate>();
   const [loading, setLoading] = useState(true);
@@ -108,6 +109,7 @@ const CertificateDetail: VFC = () => {
         const docRef = doc(db, 'certificates', code.toString());
         await deleteDoc(docRef);
         message.success('Certificate removed');
+        history.push('/dashboard');
       },
     });
   }

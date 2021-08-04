@@ -1,12 +1,7 @@
 import React, { useEffect, useState, VFC } from 'react';
 import { Alert, Button, List, Row, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import {
-  collection,
-  getFirestore,
-  onSnapshot,
-  query,
-} from 'firebase/firestore';
+import { collection, getDocs, getFirestore } from 'firebase/firestore';
 import { useHistory } from 'react-router-dom';
 import { Certificate } from '@/models/Certificate';
 import { ModalCertificateForm } from '@/components/ModalCertificateForm';
@@ -19,16 +14,13 @@ const CertificateList: VFC = () => {
   const db = getFirestore();
 
   useEffect(() => {
-    const q = query(collection(db, 'certificates'));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    getDocs(collection(db, 'certificates')).then((querySnapshot) => {
       setLoading(false);
       const data: Certificate[] = querySnapshot.docs.map((doc) =>
         Certificate.fromFirestore(doc.id, doc.data()),
       );
       setCertificates(data);
     });
-
-    return () => unsubscribe();
   }, [db]);
 
   const { error } = useMetaMask('readOnly');
