@@ -51,7 +51,7 @@ npx hardhat run smart-contract/scripts/deploy.ts --network localhost
 cp .env.example .env
 ```
 
-4. Change CONTRACT_ADDRESS on `.env` based on address returned by the deploy script.
+4. Change SNOWPACK_PUBLIC_CONTRACT_ADDRESS on `.env` based on address returned by the deploy script.
 
 5. Run the Web App. Make sure the Hardhat network still running. In conclusion, you need two terminals to run this project. One for Hardhat network, and one for the Web App :
 

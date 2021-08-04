@@ -78,7 +78,10 @@ const Dashboard: VFC = () => {
         <Alert.ErrorBoundary>
           <Suspense fallback={<Loader />}>
             <Switch>
-              <Route path={`${match.path}/:id`} component={CertificateDetail} />
+              <Route
+                path={`${match.path}/:code`}
+                component={CertificateDetail}
+              />
               <Route path={match.path} component={CertificateList} />
             </Switch>
           </Suspense>

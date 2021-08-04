@@ -55,9 +55,8 @@ const CertificateList: VFC = () => {
               <Button
                 size="small"
                 type="link"
-                onClick={() =>
-                  window.open('https://metamask.io/download.html', '_blank')
-                }
+                href="https://metamask.io/download.html"
+                target="_blank"
               >
                 Install
               </Button>
