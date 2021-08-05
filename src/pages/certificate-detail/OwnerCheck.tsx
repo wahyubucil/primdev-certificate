@@ -43,7 +43,7 @@ export const OwnerCheck: FC = ({ children }) => {
       <Space direction="vertical">
         <Text>Connect your account to modify data</Text>
         <Button type="primary" onClick={doConnect}>
-          Connect
+          Connect MetaMask
         </Button>
       </Space>
     );

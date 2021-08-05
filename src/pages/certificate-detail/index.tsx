@@ -17,6 +17,7 @@ import {
   Typography,
 } from 'antd';
 import type { BaseType } from 'antd/lib/typography/Base';
+import to from 'await-to-js';
 import {
   deleteDoc,
   doc,
@@ -31,6 +32,8 @@ import { ModalCertificateForm } from '@/components/ModalCertificateForm';
 import { Certificate } from '@/models/Certificate';
 import { BlockchainInfo } from './BlockchainInfo';
 import { Participants } from './Participants';
+import { useMetaMask } from '@/hooks/useMetaMask';
+import { CertificateManager__factory } from '@/contract-types';
 
 const { Title, Text } = Typography;
 
@@ -62,6 +65,7 @@ const CertificateDetail: VFC = () => {
   const { code } = useParams<{ code: string }>();
   const db = getFirestore();
   const history = useHistory();
+  const { provider, account } = useMetaMask();
 
   const [certificate, setCertificate] = useState<Certificate>();
   const [loading, setLoading] = useState(true);
@@ -83,6 +87,11 @@ const CertificateDetail: VFC = () => {
   if (!certificate) return <NotFound />;
 
   function revoke(code: number) {
+    if (!provider) {
+      message.error('Please install MetaMask to continue!');
+      return;
+    }
+
     Modal.confirm({
       title: 'Are you sure to revoke this certificate?',
       icon: <ExclamationCircleOutlined />,
@@ -91,6 +100,37 @@ const CertificateDetail: VFC = () => {
       okType: 'danger',
       cancelText: 'No',
       onOk: async () => {
+        const certificateManager = CertificateManager__factory.connect(
+          import.meta.env.SNOWPACK_PUBLIC_CONTRACT_ADDRESS,
+          provider,
+        );
+        const [, certificate] = await to(
+          certificateManager.getCertificate(code),
+        );
+
+        if (certificate) {
+          if (!account) {
+            message.error('Please connect MetaMask to continue!');
+            return;
+          }
+
+          const owner = (await certificateManager.owner()).toLowerCase();
+          if (owner !== account) {
+            message.error('Your account is not the owner!');
+            return;
+          }
+
+          const signer = provider.getSigner();
+          const [err, transaction] = await to(
+            certificateManager.connect(signer).revoke(code),
+          );
+          if (err) {
+            message.error('Please accept to continue!');
+            return;
+          }
+          await transaction?.wait();
+        }
+
         const docRef = doc(db, 'certificates', code.toString());
         await updateDoc(docRef, { revoked: true });
         message.success('Certificate revoked');
@@ -177,6 +217,7 @@ const CertificateDetail: VFC = () => {
             <Participants
               code={certificate.code}
               data={certificate.participants}
+              revoked={certificate.status === 'Revoked'}
             />
           </Card>
         </Col>

@@ -8,9 +8,14 @@ import { Prompt } from 'react-router-dom';
 interface ParticipantsProps {
   code: number;
   data: string[];
+  revoked: boolean;
 }
 
-export const Participants: VFC<ParticipantsProps> = ({ code, data }) => {
+export const Participants: VFC<ParticipantsProps> = ({
+  code,
+  data,
+  revoked,
+}) => {
   const [changeMode, setChangeMode] = useState(false);
   const [participants, setParticipants] = useState([...data, '']);
   const nonEmptyParticipants = participants.filter((e) => e !== '');
@@ -68,15 +73,17 @@ export const Participants: VFC<ParticipantsProps> = ({ code, data }) => {
         <Typography.Text strong>
           Participants ({nonEmptyParticipants.length})
         </Typography.Text>
-        <Button
-          icon={changeMode ? <CheckOutlined /> : <EditOutlined />}
-          size="small"
-          loading={saveLoading}
-          onClick={() => save()}
-          type={changeMode ? 'primary' : 'default'}
-        >
-          {changeMode ? 'Save' : 'Change'}
-        </Button>
+        {!revoked && (
+          <Button
+            icon={changeMode ? <CheckOutlined /> : <EditOutlined />}
+            size="small"
+            loading={saveLoading}
+            onClick={() => save()}
+            type={changeMode ? 'primary' : 'default'}
+          >
+            {changeMode ? 'Save' : 'Change'}
+          </Button>
+        )}
       </Space>
       <div style={{ marginTop: 8 }}>
         <Space direction="vertical" style={{ display: 'flex' }}>

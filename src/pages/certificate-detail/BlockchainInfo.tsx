@@ -33,7 +33,7 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
   const { error, provider } = useMetaMask();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<CertificateContract>();
-  const [updateMethod, setUpdateMethod] = useState<UpdateMethod>();
+  const [updateMethod, setUpdateMethod] = useState<UpdateMethod | null>(null);
 
   const getData = useCallback(async () => {
     if (!provider) return;
@@ -186,6 +186,7 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
     setLoading(true);
     await transaction?.wait();
     message.success('Blockchain data updated');
+    setUpdateMethod(null);
     await getData();
   }
 
@@ -239,33 +240,35 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
           )}
         </Col>
       </Row>
-      <OwnerCheck>
-        <Space direction="vertical" size="middle">
-          <Radio.Group
-            name="update_method"
-            value={updateMethod}
-            onChange={(e) => setUpdateMethod(e.target.value)}
-          >
-            <Space direction="vertical">
-              <Radio value="metadata">
-                Update Metadata{' '}
-                {!isSameMetadata && isSameParticipants && '(Recommended)'}
-              </Radio>
-              <Radio value="participants">
-                Update Participants{' '}
-                {!isSameParticipants && isSameMetadata && '(Recommended)'}
-              </Radio>
-              <Radio value="all">
-                Update All{' '}
-                {!isSameMetadata && !isSameParticipants && '(Recommended)'}
-              </Radio>
-            </Space>
-          </Radio.Group>
-          <Button type="primary" onClick={update}>
-            Update
-          </Button>
-        </Space>
-      </OwnerCheck>
+      {data.state !== State.Revoked && (
+        <OwnerCheck>
+          <Space direction="vertical" size="middle">
+            <Radio.Group
+              name="update_method"
+              value={updateMethod}
+              onChange={(e) => setUpdateMethod(e.target.value)}
+            >
+              <Space direction="vertical">
+                <Radio value="metadata">
+                  Update Metadata{' '}
+                  {!isSameMetadata && isSameParticipants && '(Recommended)'}
+                </Radio>
+                <Radio value="participants">
+                  Update Participants{' '}
+                  {!isSameParticipants && isSameMetadata && '(Recommended)'}
+                </Radio>
+                <Radio value="all">
+                  Update All{' '}
+                  {!isSameMetadata && !isSameParticipants && '(Recommended)'}
+                </Radio>
+              </Space>
+            </Radio.Group>
+            <Button type="primary" onClick={update}>
+              Update
+            </Button>
+          </Space>
+        </OwnerCheck>
+      )}
     </Space>
   );
 };
