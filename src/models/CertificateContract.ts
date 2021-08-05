@@ -1,3 +1,4 @@
+import dayjs, { Dayjs } from 'dayjs';
 import { BigNumber } from 'ethers';
 
 export class CertificateContract {
@@ -5,17 +6,29 @@ export class CertificateContract {
 
   public constructor(
     public readonly name: string,
-    public readonly expiredAt: BigNumber,
-    public readonly createdAt: BigNumber,
+    public readonly expiredAt: Dayjs,
+    public readonly createdAt: Dayjs,
     public readonly state: State,
     public readonly metadataHash: string,
     public readonly participantsHash: string,
   ) {}
 
-  static fromGetter(
-    data: [string, BigNumber, BigNumber, number, string, string],
-  ) {
-    return new CertificateContract(...data);
+  static fromGetter([
+    name,
+    expiredAt,
+    createdAt,
+    state,
+    metadataHash,
+    participantsHash,
+  ]: [string, BigNumber, BigNumber, number, string, string]) {
+    return new CertificateContract(
+      name,
+      dayjs.unix(expiredAt.toNumber()),
+      dayjs.unix(createdAt.toNumber()),
+      state,
+      metadataHash.toLowerCase(),
+      participantsHash.toLowerCase(),
+    );
   }
 
   public get participants() {

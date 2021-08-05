@@ -1,5 +1,9 @@
-import React, { useCallback, useEffect, useState, VFC } from 'react';
-import { CheckCircleFilled, LoadingOutlined } from '@ant-design/icons';
+import React, { useCallback, useEffect, useMemo, useState, VFC } from 'react';
+import {
+  CheckCircleFilled,
+  ExclamationCircleFilled,
+  LoadingOutlined,
+} from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -8,14 +12,16 @@ import {
   Row,
   Space,
   Spin,
+  Tooltip,
   Typography,
 } from 'antd';
 import to from 'await-to-js';
 import { Certificate } from '@/models/Certificate';
 import { useMetaMask } from '@/hooks/useMetaMask';
 import { CertificateManager__factory } from '@/contract-types';
-import { CertificateContract } from '@/models/CertificateContract';
+import { CertificateContract, State } from '@/models/CertificateContract';
 import { OwnerCheck } from './OwnerCheck';
+import { ethers } from 'ethers';
 
 const { Text, Paragraph } = Typography;
 
@@ -44,6 +50,36 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
   useEffect(() => {
     getData();
   }, [getData]);
+
+  const isSameMetadata = useMemo(() => {
+    if (!data) return false;
+
+    const certificateMetadataHash = ethers.utils
+      .keccak256(
+        ethers.utils.solidityPack(
+          ['string', 'uint256'],
+          [certificate.name, certificate.expiredAt?.unix() ?? 0],
+        ),
+      )
+      .toLowerCase();
+
+    return data.metadataHash === certificateMetadataHash;
+  }, [data, certificate]);
+
+  const isSameParticipants = useMemo(() => {
+    if (!data) return false;
+
+    const participantsHash = ethers.utils
+      .keccak256(
+        ethers.utils.solidityPack(
+          Array(certificate.participants.length).fill('bytes32'),
+          certificate.participantsWithHash,
+        ),
+      )
+      .toLowerCase();
+
+    return data.participantsHash === participantsHash;
+  }, [data, certificate]);
 
   if (error) return <Text>Not connected</Text>;
 
@@ -102,7 +138,7 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
           <Text strong>Created</Text>
         </Col>
         <Col>
-          <Text>22 July 2022</Text>
+          <Text>{data.createdAt.format('DD MMMM YYYY')}</Text>
         </Col>
       </Row>
       <Row justify="space-between">
@@ -110,7 +146,7 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
           <Text strong>State</Text>
         </Col>
         <Col>
-          <Text>Created</Text>
+          <Text>{State[data.state]}</Text>
         </Col>
       </Row>
       <Row justify="space-between">
@@ -118,7 +154,15 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
           <Text strong>Metadata</Text>
         </Col>
         <Col>
-          <CheckCircleFilled style={{ fontSize: '18px', color: '#52c41a' }} />
+          {isSameMetadata ? (
+            <CheckCircleFilled style={{ fontSize: '18px', color: '#52c41a' }} />
+          ) : (
+            <Tooltip title="Need update to synchronize data" placement="left">
+              <ExclamationCircleFilled
+                style={{ fontSize: '18px', color: '#faad14' }}
+              />
+            </Tooltip>
+          )}
         </Col>
       </Row>
       <Row justify="space-between">
@@ -126,14 +170,31 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
           <Text strong>Participants</Text>
         </Col>
         <Col>
-          <CheckCircleFilled style={{ fontSize: '18px', color: '#52c41a' }} />
+          {isSameParticipants ? (
+            <CheckCircleFilled style={{ fontSize: '18px', color: '#52c41a' }} />
+          ) : (
+            <Tooltip title="Need update to synchronize data" placement="left">
+              <ExclamationCircleFilled
+                style={{ fontSize: '18px', color: '#faad14' }}
+              />
+            </Tooltip>
+          )}
         </Col>
       </Row>
       <Radio.Group>
         <Space direction="vertical">
-          <Radio value={1}>Update Metadata</Radio>
-          <Radio value={2}>Update Participants (Recommended)</Radio>
-          <Radio value={3}>Update All</Radio>
+          <Radio value={1}>
+            Update Metadata{' '}
+            {!isSameMetadata && isSameParticipants && '(Recommended)'}
+          </Radio>
+          <Radio value={2}>
+            Update Participants{' '}
+            {!isSameParticipants && isSameMetadata && '(Recommended)'}
+          </Radio>
+          <Radio value={3}>
+            Update All{' '}
+            {!isSameMetadata && !isSameParticipants && '(Recommended)'}
+          </Radio>
         </Space>
       </Radio.Group>
       <Button type="primary">Update</Button>
