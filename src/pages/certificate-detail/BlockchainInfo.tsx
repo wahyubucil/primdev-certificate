@@ -16,12 +16,14 @@ import {
   Typography,
 } from 'antd';
 import to from 'await-to-js';
+import { ethers } from 'ethers';
 import { Certificate } from '@/models/Certificate';
 import { useMetaMask } from '@/hooks/useMetaMask';
 import { CertificateManager__factory } from '@/contract-types';
 import { CertificateContract, State } from '@/models/CertificateContract';
 import { OwnerCheck } from './OwnerCheck';
-import { ethers } from 'ethers';
+
+type UpdateMethod = 'metadata' | 'participants' | 'all';
 
 const { Text, Paragraph } = Typography;
 
@@ -31,6 +33,7 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
   const { error, provider } = useMetaMask();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<CertificateContract>();
+  const [updateMethod, setUpdateMethod] = useState<UpdateMethod>();
 
   const getData = useCallback(async () => {
     if (!provider) return;
@@ -116,6 +119,7 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
 
       setLoading(true);
       await transaction?.wait();
+      message.success('Blockchain data created');
       await getData();
     }
 
@@ -129,6 +133,55 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
         </OwnerCheck>
       </>
     );
+  }
+
+  async function update() {
+    const signer = provider?.getSigner();
+    if (!signer) return;
+
+    const certificateManager = CertificateManager__factory.connect(
+      import.meta.env.SNOWPACK_PUBLIC_CONTRACT_ADDRESS,
+      signer,
+    );
+
+    let err: Error | null;
+    let transaction: ethers.ContractTransaction | undefined;
+
+    if (updateMethod === 'metadata') {
+      [err, transaction] = await to(
+        certificateManager.updateMetadata(
+          certificate.code,
+          certificate.name,
+          certificate.expiredAt?.unix() ?? 0,
+        ),
+      );
+    } else if (updateMethod === 'participants') {
+      [err, transaction] = await to(
+        certificateManager.updateParticipants(
+          certificate.code,
+          certificate.participantsWithHash,
+        ),
+      );
+    } else {
+      [err, transaction] = await to(
+        certificateManager.update(
+          certificate.code,
+          certificate.name,
+          certificate.expiredAt?.unix() ?? 0,
+          certificate.participantsWithHash,
+        ),
+      );
+    }
+
+    if (err) {
+      message.error('Please accept to continue!');
+      return;
+    }
+
+    setLoading(true);
+    await transaction?.wait();
+    message.success('Blockchain data updated');
+    await getData();
   }
 
   return (
@@ -181,23 +234,29 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
           )}
         </Col>
       </Row>
-      <Radio.Group>
+      <Radio.Group
+        name="update_method"
+        value={updateMethod}
+        onChange={(e) => setUpdateMethod(e.target.value)}
+      >
         <Space direction="vertical">
-          <Radio value={1}>
+          <Radio value="metadata">
             Update Metadata{' '}
             {!isSameMetadata && isSameParticipants && '(Recommended)'}
           </Radio>
-          <Radio value={2}>
+          <Radio value="participants">
             Update Participants{' '}
             {!isSameParticipants && isSameMetadata && '(Recommended)'}
           </Radio>
-          <Radio value={3}>
+          <Radio value="all">
             Update All{' '}
             {!isSameMetadata && !isSameParticipants && '(Recommended)'}
           </Radio>
         </Space>
       </Radio.Group>
-      <Button type="primary">Update</Button>
+      <Button type="primary" onClick={update}>
+        Update
+      </Button>
     </Space>
   );
 };
