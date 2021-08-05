@@ -139,6 +139,11 @@ const CertificateDetail: VFC = () => {
   }
 
   function remove(code: number) {
+    if (!provider) {
+      message.error('Please install MetaMask to continue!');
+      return;
+    }
+
     Modal.confirm({
       title: 'Are you sure to remove this certificate?',
       icon: <ExclamationCircleOutlined />,
@@ -147,6 +152,37 @@ const CertificateDetail: VFC = () => {
       okType: 'danger',
       cancelText: 'No',
       onOk: async () => {
+        const certificateManager = CertificateManager__factory.connect(
+          import.meta.env.SNOWPACK_PUBLIC_CONTRACT_ADDRESS,
+          provider,
+        );
+        const [, certificate] = await to(
+          certificateManager.getCertificate(code),
+        );
+
+        if (certificate) {
+          if (!account) {
+            message.error('Please connect MetaMask to continue!');
+            return;
+          }
+
+          const owner = (await certificateManager.owner()).toLowerCase();
+          if (owner !== account) {
+            message.error('Your account is not the owner!');
+            return;
+          }
+
+          const signer = provider.getSigner();
+          const [err, transaction] = await to(
+            certificateManager.connect(signer).remove(code),
+          );
+          if (err) {
+            message.error('Please accept to continue!');
+            return;
+          }
+          await transaction?.wait();
+        }
+
         const docRef = doc(db, 'certificates', code.toString());
         await deleteDoc(docRef);
         message.success('Certificate removed');
