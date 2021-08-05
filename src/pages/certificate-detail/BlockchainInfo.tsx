@@ -136,6 +136,11 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
   }
 
   async function update() {
+    if (!updateMethod) {
+      message.error('Please choose update method!');
+      return;
+    }
+
     const signer = provider?.getSigner();
     if (!signer) return;
 
@@ -234,29 +239,33 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
           )}
         </Col>
       </Row>
-      <Radio.Group
-        name="update_method"
-        value={updateMethod}
-        onChange={(e) => setUpdateMethod(e.target.value)}
-      >
-        <Space direction="vertical">
-          <Radio value="metadata">
-            Update Metadata{' '}
-            {!isSameMetadata && isSameParticipants && '(Recommended)'}
-          </Radio>
-          <Radio value="participants">
-            Update Participants{' '}
-            {!isSameParticipants && isSameMetadata && '(Recommended)'}
-          </Radio>
-          <Radio value="all">
-            Update All{' '}
-            {!isSameMetadata && !isSameParticipants && '(Recommended)'}
-          </Radio>
+      <OwnerCheck>
+        <Space direction="vertical" size="middle">
+          <Radio.Group
+            name="update_method"
+            value={updateMethod}
+            onChange={(e) => setUpdateMethod(e.target.value)}
+          >
+            <Space direction="vertical">
+              <Radio value="metadata">
+                Update Metadata{' '}
+                {!isSameMetadata && isSameParticipants && '(Recommended)'}
+              </Radio>
+              <Radio value="participants">
+                Update Participants{' '}
+                {!isSameParticipants && isSameMetadata && '(Recommended)'}
+              </Radio>
+              <Radio value="all">
+                Update All{' '}
+                {!isSameMetadata && !isSameParticipants && '(Recommended)'}
+              </Radio>
+            </Space>
+          </Radio.Group>
+          <Button type="primary" onClick={update}>
+            Update
+          </Button>
         </Space>
-      </Radio.Group>
-      <Button type="primary" onClick={update}>
-        Update
-      </Button>
+      </OwnerCheck>
     </Space>
   );
 };
