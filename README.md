@@ -111,4 +111,10 @@ Here's how to deploy the smart contract. Make sure to change the NETWORK based o
 npx hardhat run smart-contract/scripts/deploy.ts --network NETWORK
 ```
 
-This project uses Ropsten as the test network. So if you like to try using Ropsten too, just change ROPSTEN_PRIVATE_KEY with your account private key. After that, run the deploy script above with `ropsten` as the network.
+This project uses Ropsten as the test network. So if you like to try using Ropsten too, here's how:
+
+1. Change DEPLOYER_PRIVATE_KEY on `.env` with your account private key.
+2. You can use [Infura](https://infura.io) to create an Ethereum node. Infura Ethereum node already includes the Ropsten network.
+3. After creating an Ethereum node on Infura, go to `Settings`, change the `ENDPOINTS` selection from `Mainnet` to `Ropsten`. Copy the HTTP URL, that's your Ropsten RPC URL. The URL should look like this: `https://ropsten.infura.io/v3/12345abcde`. You can see that it starts with `ropsten` on the subdomain.
+4. Change ROPSTEN_RPC_URL on `.env` with your Ropsten RPC URL.
+5. Run the deploy script with `ropsten` as the network.
