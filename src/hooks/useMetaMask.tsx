@@ -48,7 +48,8 @@ interface MetaMaskProvider {
   error: ErrorState | null;
   ethereum: Ethereumish | null;
   provider: ethers.providers.Web3Provider | null;
-  account: string | null;
+  account: string | null | false;
+  connect: () => Promise<unknown>;
 }
 
 const metamaskContext = createContext<MetaMaskProvider | undefined>(undefined);
@@ -75,7 +76,7 @@ function useProvideMetaMask(): MetaMaskProvider {
   const [error, setError] = useState<ErrorState | null>(null);
   const [ethereum, setEthereum] = useState<Ethereumish | null>(null);
   const provider = ethereum && new ethers.providers.Web3Provider(ethereum);
-  const [account, setAccount] = useState<string | null>(null);
+  const [account, setAccount] = useState<string | null | false>(null);
 
   useEffect(() => {
     detectEthereumProvider().then((ethereumProvider) => {
@@ -94,7 +95,8 @@ function useProvideMetaMask(): MetaMaskProvider {
   }, []);
 
   const handleAccountsChanged = useCallback((accounts: string[]) => {
-    if (accounts.length > 0) setAccount(accounts[0]);
+    if (accounts.length > 0) setAccount(accounts[0].toLowerCase());
+    else setAccount(false);
   }, []);
 
   useEffect(() => {
@@ -117,5 +119,11 @@ function useProvideMetaMask(): MetaMaskProvider {
     };
   }, [ethereum, handleAccountsChanged]);
 
-  return { error, ethereum, provider, account };
+  function connect() {
+    if (!ethereum) return Promise.reject('MetaMask not installed');
+
+    return ethereum.request({ method: 'eth_requestAccounts' });
+  }
+
+  return { error, ethereum, provider, account, connect };
 }
