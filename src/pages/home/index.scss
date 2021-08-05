@@ -24,4 +24,11 @@
   &__form {
     margin-top: 36px;
   }
+
+  &__error {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+  }
 }

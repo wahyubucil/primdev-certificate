@@ -6,7 +6,7 @@ export class CertificateContract {
 
   public constructor(
     public readonly name: string,
-    public readonly expiredAt: Dayjs,
+    public readonly expiredAt: Dayjs | null,
     public readonly createdAt: Dayjs,
     public readonly state: State,
     public readonly metadataHash: string,
@@ -23,7 +23,7 @@ export class CertificateContract {
   ]: [string, BigNumber, BigNumber, number, string, string]) {
     return new CertificateContract(
       name,
-      dayjs.unix(expiredAt.toNumber()),
+      expiredAt.toNumber() > 0 ? dayjs.unix(expiredAt.toNumber()) : null,
       dayjs.unix(createdAt.toNumber()),
       state,
       metadataHash.toLowerCase(),
