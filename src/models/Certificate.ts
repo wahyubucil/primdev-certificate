@@ -1,4 +1,5 @@
 import dayjs, { Dayjs } from 'dayjs';
+import { ethers } from 'ethers';
 import type { DocumentData, Timestamp } from 'firebase/firestore';
 
 type Status = 'Available' | 'Expired' | 'Revoked';
@@ -29,5 +30,9 @@ export class Certificate {
       status,
     );
     return certificate;
+  }
+
+  public get participantsWithHash() {
+    return this.participants.map((e) => ethers.utils.id(e.toLowerCase()));
   }
 }

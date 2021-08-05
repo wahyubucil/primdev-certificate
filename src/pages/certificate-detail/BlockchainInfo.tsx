@@ -1,10 +1,21 @@
-import React, { useEffect, useState, VFC } from 'react';
-import { CheckCircleFilled } from '@ant-design/icons';
-import { Button, Col, Radio, Row, Space, Spin, Typography } from 'antd';
+import React, { useCallback, useEffect, useState, VFC } from 'react';
+import { CheckCircleFilled, LoadingOutlined } from '@ant-design/icons';
+import {
+  Button,
+  Col,
+  message,
+  Radio,
+  Row,
+  Space,
+  Spin,
+  Typography,
+} from 'antd';
+import to from 'await-to-js';
 import { Certificate } from '@/models/Certificate';
 import { useMetaMask } from '@/hooks/useMetaMask';
 import { CertificateManager__factory } from '@/contract-types';
 import { CertificateContract } from '@/models/CertificateContract';
+import { OwnerCheck } from './OwnerCheck';
 
 const { Text, Paragraph } = Typography;
 
@@ -12,31 +23,74 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
   certificate,
 }) => {
   const { error, provider } = useMetaMask();
-  const [data, setData] = useState<CertificateContract>();
   const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<CertificateContract>();
 
-  useEffect(() => {
+  const getData = useCallback(async () => {
     if (!provider) return;
 
     const certificateManager = CertificateManager__factory.connect(
       import.meta.env.SNOWPACK_PUBLIC_CONTRACT_ADDRESS,
       provider,
     );
-    certificateManager
-      .getCertificate(certificate.code)
-      .then((value) => setData(CertificateContract.fromGetter(value)))
-      .finally(() => setLoading(false));
+
+    const [, value] = await to(
+      certificateManager.getCertificate(certificate.code),
+    );
+    if (value) setData(CertificateContract.fromGetter(value));
+    setLoading(false);
   }, [provider, certificate]);
+
+  useEffect(() => {
+    getData();
+  }, [getData]);
 
   if (error) return <Text>Not connected</Text>;
 
-  if (loading) return <Spin />;
+  if (loading)
+    return (
+      <Space>
+        Loading Blockchain Data <Spin indicator={<LoadingOutlined spin />} />
+      </Space>
+    );
 
   if (!data) {
+    async function create() {
+      const signer = provider?.getSigner();
+      if (!signer) return;
+
+      const certificateManager = CertificateManager__factory.connect(
+        import.meta.env.SNOWPACK_PUBLIC_CONTRACT_ADDRESS,
+        signer,
+      );
+
+      const { code, name, expiredAt, participantsWithHash } = certificate;
+      const [err, transaction] = await to(
+        certificateManager.create(
+          code,
+          name,
+          expiredAt?.unix() ?? 0,
+          participantsWithHash,
+        ),
+      );
+      if (err) {
+        message.error('Please accept to continue!');
+        return;
+      }
+
+      setLoading(true);
+      await transaction?.wait();
+      await getData();
+    }
+
     return (
       <>
         <Paragraph>Not available</Paragraph>
-        <Button type="primary">Create</Button>
+        <OwnerCheck>
+          <Button type="primary" onClick={create}>
+            Create
+          </Button>
+        </OwnerCheck>
       </>
     );
   }
