@@ -124,14 +124,16 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
     }
 
     return (
-      <>
-        <Paragraph>Not available</Paragraph>
-        <OwnerCheck>
-          <Button type="primary" onClick={create}>
-            Create
-          </Button>
-        </OwnerCheck>
-      </>
+      <Space direction="vertical">
+        <Text>Not available</Text>
+        {certificate.status !== 'Revoked' && (
+          <OwnerCheck>
+            <Button type="primary" onClick={create}>
+              Create
+            </Button>
+          </OwnerCheck>
+        )}
+      </Space>
     );
   }
 
