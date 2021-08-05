@@ -25,7 +25,7 @@ import { OwnerCheck } from './OwnerCheck';
 
 type UpdateMethod = 'metadata' | 'participants' | 'all';
 
-const { Text, Paragraph } = Typography;
+const { Text } = Typography;
 
 export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
   certificate,
