@@ -1,8 +1,8 @@
-import { CheckOutlined, EditOutlined } from '@ant-design/icons';
+import React, { useEffect, useRef, useState, VFC } from 'react';
+import { CheckOutlined, CloseOutlined, EditOutlined } from '@ant-design/icons';
 import { Button, Input, message, Space, Typography } from 'antd';
 import type { MessageType } from 'antd/lib/message';
 import { doc, getFirestore, updateDoc } from 'firebase/firestore';
-import React, { useEffect, useRef, useState, VFC } from 'react';
 import { Prompt } from 'react-router-dom';
 
 interface ParticipantsProps {
@@ -17,7 +17,9 @@ export const Participants: VFC<ParticipantsProps> = ({
   revoked,
 }) => {
   const [changeMode, setChangeMode] = useState(false);
-  const [participants, setParticipants] = useState([...data, '']);
+
+  const initialData = [...data, ''];
+  const [participants, setParticipants] = useState(initialData);
   const nonEmptyParticipants = participants.filter((e) => e !== '');
 
   function onChangeName(value: string, idx: number) {
@@ -29,6 +31,30 @@ export const Participants: VFC<ParticipantsProps> = ({
 
     newParticipants.push('');
 
+    setParticipants(newParticipants);
+  }
+
+  function onPaste(event: React.ClipboardEvent<HTMLInputElement>, idx: number) {
+    event.preventDefault();
+
+    const leftParticipants = participants.slice(0, idx);
+
+    const rightIndex = idx + 1;
+    const rightParticipants =
+      rightIndex === participants.length
+        ? ['']
+        : participants.slice(rightIndex);
+
+    const pastedText = event.clipboardData.getData('text');
+    const [firstValue, ...otherValues] = pastedText.split('\n');
+    const currentIndexValue = participants[idx] + firstValue;
+
+    const newParticipants = [
+      ...leftParticipants,
+      currentIndexValue,
+      ...otherValues,
+      ...rightParticipants,
+    ];
     setParticipants(newParticipants);
   }
 
@@ -54,17 +80,19 @@ export const Participants: VFC<ParticipantsProps> = ({
     };
   }, [changeMode]);
 
+  function cancel() {
+    setParticipants(initialData);
+    setChangeMode(false);
+  }
+
   const [saveLoading, setSaveLoading] = useState(false);
   const db = getFirestore();
   async function save() {
-    if (changeMode) {
-      setSaveLoading(true);
-      const docRef = doc(db, 'certificates', code.toString());
-      await updateDoc(docRef, { participants: nonEmptyParticipants });
-      setSaveLoading(false);
-    }
-
-    setChangeMode(!changeMode);
+    setSaveLoading(true);
+    const docRef = doc(db, 'certificates', code.toString());
+    await updateDoc(docRef, { participants: nonEmptyParticipants });
+    setSaveLoading(false);
+    setChangeMode(false);
   }
 
   return (
@@ -73,15 +101,37 @@ export const Participants: VFC<ParticipantsProps> = ({
         <Typography.Text strong>
           Participants ({nonEmptyParticipants.length})
         </Typography.Text>
-        {!revoked && (
+        {!revoked && changeMode && (
+          <>
+            <Button
+              icon={<CloseOutlined />}
+              size="small"
+              danger
+              type="primary"
+              onClick={cancel}
+              disabled={saveLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              icon={<CheckOutlined />}
+              size="small"
+              loading={saveLoading}
+              onClick={save}
+              type="primary"
+            >
+              Save
+            </Button>
+          </>
+        )}
+        {!revoked && !changeMode && (
           <Button
-            icon={changeMode ? <CheckOutlined /> : <EditOutlined />}
+            icon={<EditOutlined />}
             size="small"
-            loading={saveLoading}
-            onClick={() => save()}
-            type={changeMode ? 'primary' : 'default'}
+            onClick={() => setChangeMode(true)}
+            type="default"
           >
-            {changeMode ? 'Save' : 'Change'}
+            Change
           </Button>
         )}
       </Space>
@@ -95,6 +145,7 @@ export const Participants: VFC<ParticipantsProps> = ({
                 value={participant}
                 readOnly={!changeMode}
                 onChange={(e) => onChangeName(e.target.value, idx)}
+                onPaste={(e) => onPaste(e, idx)}
               />
             ),
           )}
