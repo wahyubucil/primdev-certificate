@@ -1,4 +1,14 @@
-import { Alert, Avatar, Col, Dropdown, Layout, Menu, Row, Spin } from 'antd';
+import {
+  Alert,
+  Avatar,
+  Col,
+  Dropdown,
+  Layout,
+  Menu,
+  Row,
+  Spin,
+  Grid,
+} from 'antd';
 import {
   DownOutlined,
   LoadingOutlined,
@@ -11,6 +21,7 @@ import type { User } from 'firebase/auth';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import './index.scss';
 import logo from '@/assets/logo-primakara-developers.svg';
+import logoNoText from '@/assets/logo-primakara-developers-no-text.svg';
 import { Loader } from '@/components/Loader';
 import { Footer } from '@/components/Footer';
 import { useAuth } from '@/hooks/useAuth';
@@ -23,6 +34,7 @@ const { Header, Content, Footer: AntdFooter } = Layout;
 const Dashboard: VFC = () => {
   const auth = useAuth();
   const match = useRouteMatch();
+  const screens = Grid.useBreakpoint();
 
   // Get display name
   const [displayName, setDisplayName] = useState<string>();
@@ -55,7 +67,7 @@ const Dashboard: VFC = () => {
           <Col flex="auto" className="full-height">
             <Link to="/dashboard">
               <img
-                src={logo}
+                src={screens.xs ? logoNoText : logo}
                 alt="Logo Primakara Developers"
                 className="full-height"
               />
@@ -87,7 +99,7 @@ const Dashboard: VFC = () => {
           </Suspense>
         </Alert.ErrorBoundary>
       </Content>
-      <AntdFooter>
+      <AntdFooter className="Dashboard__footer">
         <Footer withPadding={false} />
       </AntdFooter>
     </Layout>

@@ -47,7 +47,7 @@ const CertificateList: VFC = () => {
       <List
         dataSource={certificates}
         loading={loading}
-        grid={{ gutter: 16, column: 3 }}
+        grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 3, column: 3 }}
         rowKey={(item) => item.code.toString()}
         renderItem={(item) => (
           <List.Item>

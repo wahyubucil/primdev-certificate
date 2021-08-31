@@ -2,6 +2,10 @@
   &__header {
     background-color: #fff;
     box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
+
+    @media only screen and (max-width: 575px) {
+      padding: 0 24px;
+    }
   }
 
   &__header-menu {
@@ -17,29 +21,17 @@
   }
 
   &__content {
-    margin: 24px 50px;
+    margin: 24px;
     min-height: calc(100vh - 48px - 64px);
+
+    @media only screen and (min-width: 576px) {
+      margin: 24px 50px;
+    }
   }
 
   &__footer {
-    color: rgba(0, 0, 0, 0.45);
-    text-align: center;
-
-    a {
-      color: rgba(0, 0, 0, 0.45);
-      transition: all 0.3s;
-    }
-
-    a:hover {
-      color: rgba(0, 0, 0, 0.85);
-    }
-  }
-
-  &__footer-links {
-    margin-bottom: 8px;
-
-    a:nth-child(2) {
-      margin: 0 40px;
+    @media only screen and (max-width: 575px) {
+      padding: 24px;
     }
   }
 }

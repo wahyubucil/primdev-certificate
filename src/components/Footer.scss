@@ -19,14 +19,15 @@
   &__links {
     margin-bottom: 8px;
 
-    @media only screen and (max-width: 424px) {
+    @media only screen and (max-width: 575px) {
       display: flex;
       justify-content: center;
     }
+
     a:nth-child(2) {
       margin: 0 16px;
 
-      @media only screen and (min-width: 425px) {
+      @media only screen and (min-width: 576px) {
         margin: 0 40px;
       }
     }
