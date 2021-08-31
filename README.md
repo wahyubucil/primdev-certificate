@@ -51,7 +51,7 @@ npx hardhat run smart-contract/scripts/deploy.ts --network localhost
 cp .env.example .env
 ```
 
-4. Change SNOWPACK_PUBLIC_CONTRACT_ADDRESS on `.env` based on address returned by the deploy script.
+4. Change SNOWPACK_PUBLIC_CONTRACT_ADDRESS_LOCAL on `.env` based on address returned by the deploy script.
 
 5. Run the Web App. Make sure the Hardhat network still running. In conclusion, you need two terminals to run this project. One for Hardhat network, and one for the Web App :
 
@@ -117,4 +117,4 @@ This project uses Ropsten as the test network. So if you like to try using Ropst
 2. You can use [Infura](https://infura.io) to create an Ethereum node. Infura Ethereum node already includes the Ropsten network.
 3. After creating an Ethereum node on Infura, go to `Settings`, change the `ENDPOINTS` selection from `Mainnet` to `Ropsten`. Copy the HTTP URL, that's your Ropsten RPC URL. The URL should look like this: `https://ropsten.infura.io/v3/12345abcde`. You can see that it starts with `ropsten` on the subdomain.
 4. Change ROPSTEN_RPC_URL on `.env` with your Ropsten RPC URL.
-5. Run the deploy script with `ropsten` as the network.
+5. Run the deploy script with `ropsten` as the network. Change SNOWPACK_PUBLIC_CONTRACT_ADDRESS_ROPSTEN on `.env` based on address returned by the deploy script.

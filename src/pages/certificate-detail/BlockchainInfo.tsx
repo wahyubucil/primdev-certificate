@@ -22,6 +22,7 @@ import { useMetaMask } from '@/hooks/useMetaMask';
 import { CertificateManager__factory } from '@/contract-types';
 import { CertificateContract, State } from '@/models/CertificateContract';
 import { OwnerCheck } from './OwnerCheck';
+import { contractConfig } from '@/contract-config';
 
 type UpdateMethod = 'metadata' | 'participants' | 'all';
 
@@ -39,7 +40,7 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
     if (!provider) return;
 
     const certificateManager = CertificateManager__factory.connect(
-      import.meta.env.SNOWPACK_PUBLIC_CONTRACT_ADDRESS,
+      contractConfig[provider.network.chainId].address,
       provider,
     );
 
@@ -95,11 +96,12 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
 
   if (!data) {
     async function create() {
-      const signer = provider?.getSigner();
+      if (!provider) return;
+      const signer = provider.getSigner();
       if (!signer) return;
 
       const certificateManager = CertificateManager__factory.connect(
-        import.meta.env.SNOWPACK_PUBLIC_CONTRACT_ADDRESS,
+        contractConfig[provider.network.chainId].address,
         signer,
       );
 
@@ -143,11 +145,12 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
       return;
     }
 
-    const signer = provider?.getSigner();
+    if (!provider) return;
+    const signer = provider.getSigner();
     if (!signer) return;
 
     const certificateManager = CertificateManager__factory.connect(
-      import.meta.env.SNOWPACK_PUBLIC_CONTRACT_ADDRESS,
+      contractConfig[provider.network.chainId].address,
       signer,
     );
 

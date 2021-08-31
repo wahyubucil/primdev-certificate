@@ -7,6 +7,7 @@ import type { Certificate } from '@/models/Certificate';
 import { useMetaMask } from '@/hooks/useMetaMask';
 import { CertificateManager__factory } from '@/contract-types';
 import './CertificateCard.scss';
+import { contractConfig } from '@/contract-config';
 
 const { Text } = Typography;
 
@@ -35,7 +36,7 @@ export const CertificateCard: VFC<{ data: Certificate }> = ({ data }) => {
     if (!provider) return;
 
     const certificateManager = CertificateManager__factory.connect(
-      import.meta.env.SNOWPACK_PUBLIC_CONTRACT_ADDRESS,
+      contractConfig[provider.network.chainId].address,
       provider,
     );
     certificateManager

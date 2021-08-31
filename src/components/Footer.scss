@@ -7,17 +7,21 @@
     padding: 24px 0;
   }
 
-  a {
+  a,
+  .ant-typography {
     color: rgba(0, 0, 0, 0.45);
-    transition: all 0.3s;
   }
 
-  a:hover {
-    color: rgba(0, 0, 0, 0.85);
+  a {
+    transition: all 0.3s;
+
+    &:hover {
+      color: rgba(0, 0, 0, 0.85);
+    }
   }
 
   &__links {
-    margin-bottom: 8px;
+    margin: 8px 0;
 
     @media only screen and (max-width: 575px) {
       display: flex;

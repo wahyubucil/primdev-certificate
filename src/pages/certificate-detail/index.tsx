@@ -36,6 +36,7 @@ import { Participants } from './Participants';
 import { useMetaMask } from '@/hooks/useMetaMask';
 import { CertificateManager__factory } from '@/contract-types';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
+import { contractConfig } from '@/contract-config';
 
 const { Title, Text } = Typography;
 
@@ -97,7 +98,7 @@ const CertificateDetail: VFC = () => {
       cancelText: 'No',
       onOk: async () => {
         const certificateManager = CertificateManager__factory.connect(
-          import.meta.env.SNOWPACK_PUBLIC_CONTRACT_ADDRESS,
+          contractConfig[provider.network.chainId].address,
           provider,
         );
         const [, certificate] = await to(
@@ -149,7 +150,7 @@ const CertificateDetail: VFC = () => {
       cancelText: 'No',
       onOk: async () => {
         const certificateManager = CertificateManager__factory.connect(
-          import.meta.env.SNOWPACK_PUBLIC_CONTRACT_ADDRESS,
+          contractConfig[provider.network.chainId].address,
           provider,
         );
         const [, certificate] = await to(

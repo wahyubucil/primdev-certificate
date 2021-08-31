@@ -8,6 +8,7 @@ import { useMetaMask } from '@/hooks/useMetaMask';
 import { CertificateManager__factory } from '@/contract-types';
 import { CertificateContract, Validity } from '@/models/CertificateContract';
 import './index.scss';
+import { contractConfig } from '@/contract-config';
 
 interface FormValues {
   code: string;
@@ -60,7 +61,7 @@ const Home: VFC = () => {
     const name = values.name.toLowerCase();
 
     const certificateManager = CertificateManager__factory.connect(
-      import.meta.env.SNOWPACK_PUBLIC_CONTRACT_ADDRESS,
+      contractConfig[provider.network.chainId].address,
       provider,
     );
     const [, certificate] = await to(certificateManager.getCertificate(code));

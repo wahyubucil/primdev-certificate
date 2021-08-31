@@ -3,6 +3,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Button, message, Space, Spin, Typography } from 'antd';
 import { useMetaMask } from '@/hooks/useMetaMask';
 import { CertificateManager__factory } from '@/contract-types';
+import { contractConfig } from '@/contract-config';
 
 const { Text } = Typography;
 
@@ -16,7 +17,7 @@ export const OwnerCheck: FC = ({ children }) => {
 
     setLoading(true);
     const certificateManager = CertificateManager__factory.connect(
-      import.meta.env.SNOWPACK_PUBLIC_CONTRACT_ADDRESS,
+      contractConfig[provider.network.chainId].address,
       provider,
     );
     certificateManager.owner().then((value) => {
