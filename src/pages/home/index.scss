@@ -4,8 +4,13 @@
   flex-direction: column;
   min-height: 100vh;
   margin: auto;
-  max-width: 360px;
+  padding: 0 16px;
   width: 100%;
+
+  @media only screen and (min-width: 376px) {
+    max-width: 360px;
+    padding: 0;
+  }
 
   &__logo {
     margin-top: 48px;
