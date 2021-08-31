@@ -35,15 +35,9 @@ import { BlockchainInfo } from './BlockchainInfo';
 import { Participants } from './Participants';
 import { useMetaMask } from '@/hooks/useMetaMask';
 import { CertificateManager__factory } from '@/contract-types';
+import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 
 const { Title, Text } = Typography;
-
-const info = (label: string, value: string, type?: BaseType) => (
-  <Space size="middle">
-    <Text strong>{label}</Text>
-    <Text type={type}>{value}</Text>
-  </Space>
-);
 
 const NotFound: VFC = () => {
   const history = useHistory();
@@ -67,6 +61,7 @@ const CertificateDetail: VFC = () => {
   const db = getFirestore();
   const history = useHistory();
   const { provider, account } = useMetaMask();
+  const screens = useBreakpoint();
 
   const [certificate, setCertificate] = useState<Certificate>();
   const [loading, setLoading] = useState(true);
@@ -194,7 +189,7 @@ const CertificateDetail: VFC = () => {
 
   const isNotRevoked = certificate.status !== 'Revoked';
   const buttons = (
-    <Space>
+    <Space direction={screens.xs ? 'vertical' : 'horizontal'}>
       {isNotRevoked && (
         <Button
           icon={<EditOutlined />}
@@ -223,34 +218,39 @@ const CertificateDetail: VFC = () => {
     </Space>
   );
 
+  const info = (label: string, value: string, type?: BaseType) => (
+    <Col xs={screens.xs ? 24 : undefined}>
+      <Space size="middle">
+        <Text strong>{label}</Text>
+        <Text type={type}>{value}</Text>
+      </Space>
+    </Col>
+  );
+
   return (
     <>
       <MetaMaskDetector style={{ marginBottom: 16 }} />
-      <Row gutter={24}>
-        <Col span={16}>
+      <Row gutter={[24, 24]}>
+        <Col xs={24} lg={16}>
           <Card
             className="CertificateDetail__card"
             title={<Title level={3}>{certificate.name}</Title>}
             extra={buttons}
           >
-            <Row justify="space-between">
-              <Col>{info('Code', certificate.code.toString())}</Col>
-              <Col>
-                {info(
-                  'Status',
-                  certificate.status,
-                  certificate.status === 'Available' ? 'success' : 'danger',
-                )}
-              </Col>
-              <Col>
-                {info(
-                  'Expired',
-                  certificate.expiredAt
-                    ? certificate.expiredAt.format('DD MMMM YYYY')
-                    : 'None',
-                  certificate.status === 'Expired' ? 'danger' : undefined,
-                )}
-              </Col>
+            <Row justify="space-between" gutter={[0, 8]}>
+              {info('Code', certificate.code.toString())}
+              {info(
+                'Status',
+                certificate.status,
+                certificate.status === 'Available' ? 'success' : 'danger',
+              )}
+              {info(
+                'Expired',
+                certificate.expiredAt
+                  ? certificate.expiredAt.format('DD MMMM YYYY')
+                  : 'None',
+                certificate.status === 'Expired' ? 'danger' : undefined,
+              )}
             </Row>
             <Participants
               code={certificate.code}
@@ -259,7 +259,7 @@ const CertificateDetail: VFC = () => {
             />
           </Card>
         </Col>
-        <Col span={8}>
+        <Col xs={24} lg={8}>
           <Card title="Blockchain Information">
             <BlockchainInfo certificate={certificate} />
           </Card>

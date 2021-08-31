@@ -2,10 +2,24 @@
   &__card {
     .ant-card-head-wrapper {
       align-items: flex-start;
+
+      @media only screen and (max-width: 767px) {
+        flex-direction: column;
+      }
     }
 
     .ant-card-head-title {
       white-space: normal;
+
+      @media only screen and (max-width: 767px) {
+        padding-bottom: 0;
+      }
+    }
+
+    .ant-card-extra {
+      @media only screen and (max-width: 767px) {
+        margin-left: 0;
+      }
     }
   }
 }
