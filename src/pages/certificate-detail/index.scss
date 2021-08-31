@@ -1,0 +1,11 @@
+.CertificateDetail {
+  &__card {
+    .ant-card-head-wrapper {
+      align-items: flex-start;
+    }
+
+    .ant-card-head-title {
+      white-space: normal;
+    }
+  }
+}

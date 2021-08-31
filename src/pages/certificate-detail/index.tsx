@@ -26,6 +26,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { useHistory, useParams } from 'react-router-dom';
+import './index.scss';
 import { Loader } from '@/components/Loader';
 import { MetaMaskDetector } from '@/components/MetaMaskDetector';
 import { ModalCertificateForm } from '@/components/ModalCertificateForm';
@@ -228,6 +229,7 @@ const CertificateDetail: VFC = () => {
       <Row gutter={24}>
         <Col span={16}>
           <Card
+            className="CertificateDetail__card"
             title={<Title level={3}>{certificate.name}</Title>}
             extra={buttons}
           >
