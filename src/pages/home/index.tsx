@@ -8,7 +8,7 @@ import { useMetaMask } from '@/hooks/useMetaMask';
 import { CertificateManager__factory } from '@/contract-types';
 import { CertificateContract, Validity } from '@/models/CertificateContract';
 import './index.scss';
-import { contractConfig } from '@/contract-config';
+import { getContractConfig } from '@/contract-config';
 
 interface FormValues {
   code: string;
@@ -27,6 +27,7 @@ const Home: VFC = () => {
   const { error, provider } = useMetaMask();
   const [formLoading, setformLoading] = useState(false);
   const [result, setResult] = useState<ResultInfo>();
+  const config = getContractConfig(provider);
 
   if (error) {
     return (
@@ -53,6 +54,18 @@ const Home: VFC = () => {
 
   if (!provider) return <Loader />;
 
+  if (!config?.address) {
+    return (
+      <div className="Home__error">
+        <Result
+          status="403"
+          title="Network not supported"
+          subTitle="Change to supported network"
+        />
+      </div>
+    );
+  }
+
   async function check(values: FormValues) {
     if (!provider) return;
 
@@ -61,7 +74,7 @@ const Home: VFC = () => {
     const name = values.name.toLowerCase();
 
     const certificateManager = CertificateManager__factory.connect(
-      contractConfig[provider.network.chainId].address,
+      config!.address!,
       provider,
     );
     const [, certificate] = await to(certificateManager.getCertificate(code));
