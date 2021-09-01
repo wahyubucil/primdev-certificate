@@ -6,6 +6,7 @@ import React, {
   createContext,
   FC,
   useContext,
+  useMemo,
 } from 'react';
 import type {
   ProviderMessage,
@@ -75,7 +76,10 @@ export function useMetaMask() {
 function useProvideMetaMask(): MetaMaskProvider {
   const [error, setError] = useState<ErrorState | null>(null);
   const [ethereum, setEthereum] = useState<Ethereumish | null>(null);
-  const provider = ethereum && new ethers.providers.Web3Provider(ethereum);
+  const provider = useMemo(
+    () => ethereum && new ethers.providers.Web3Provider(ethereum),
+    [ethereum],
+  );
   const [account, setAccount] = useState<string | null | false>(null);
 
   useEffect(() => {

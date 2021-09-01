@@ -1,5 +1,5 @@
 import React, { VFC } from 'react';
-import { contractConfig } from '@/contract-config';
+import { getContractConfig } from '@/contract-config';
 import { useMetaMask } from '@/hooks/useMetaMask';
 import {
   CopyrightOutlined,
@@ -19,9 +19,9 @@ export const ContractAddress: VFC = () => {
 
   if (!provider) return <Spin indicator={<LoadingOutlined spin />} />;
 
-  const config = contractConfig[provider.network.chainId];
+  const config = getContractConfig(provider);
 
-  if (!config) return <Text>None</Text>;
+  if (!config || !config.address) return <Text>None</Text>;
 
   if (!config.blockExplorerUrl) return <Text copyable>{config.address}</Text>;
 

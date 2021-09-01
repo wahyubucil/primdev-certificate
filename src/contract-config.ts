@@ -1,7 +1,9 @@
+import { ethers } from 'ethers';
+
 interface ContractConfig {
   [key: number]: {
-    address: string;
-    blockExplorerUrl: string | null;
+    address?: string;
+    blockExplorerUrl?: string;
   };
 }
 
@@ -12,6 +14,12 @@ export const contractConfig: ContractConfig = {
   },
   1337: {
     address: import.meta.env.SNOWPACK_PUBLIC_CONTRACT_ADDRESS_LOCAL,
-    blockExplorerUrl: null,
   },
 };
+
+export function getContractConfig(
+  provider: ethers.providers.Web3Provider | null,
+) {
+  if (!provider?.network?.chainId) return null;
+  return contractConfig[provider.network.chainId];
+}

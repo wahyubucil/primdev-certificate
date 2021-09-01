@@ -22,7 +22,7 @@ import { useMetaMask } from '@/hooks/useMetaMask';
 import { CertificateManager__factory } from '@/contract-types';
 import { CertificateContract, State } from '@/models/CertificateContract';
 import { OwnerCheck } from './OwnerCheck';
-import { contractConfig } from '@/contract-config';
+import { getContractConfig } from '@/contract-config';
 
 type UpdateMethod = 'metadata' | 'participants' | 'all';
 
@@ -35,12 +35,18 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<CertificateContract>();
   const [updateMethod, setUpdateMethod] = useState<UpdateMethod | null>(null);
+  const config = getContractConfig(provider);
 
   const getData = useCallback(async () => {
     if (!provider) return;
 
+    if (!config || !config.address) {
+      setLoading(false);
+      return;
+    }
+
     const certificateManager = CertificateManager__factory.connect(
-      contractConfig[provider.network.chainId].address,
+      config.address,
       provider,
     );
 
@@ -49,7 +55,7 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
     );
     if (value) setData(CertificateContract.fromGetter(value));
     setLoading(false);
-  }, [provider, certificate]);
+  }, [provider, certificate, config]);
 
   useEffect(() => {
     getData();
@@ -94,14 +100,15 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
       </Space>
     );
 
+  if (!config || !config.address) return <Text>Network not supported</Text>;
+
   if (!data) {
     async function create() {
-      if (!provider) return;
-      const signer = provider.getSigner();
+      const signer = provider?.getSigner();
       if (!signer) return;
 
       const certificateManager = CertificateManager__factory.connect(
-        contractConfig[provider.network.chainId].address,
+        config!.address!,
         signer,
       );
 
@@ -145,12 +152,11 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
       return;
     }
 
-    if (!provider) return;
-    const signer = provider.getSigner();
+    const signer = provider?.getSigner();
     if (!signer) return;
 
     const certificateManager = CertificateManager__factory.connect(
-      contractConfig[provider.network.chainId].address,
+      config!.address!,
       signer,
     );
 
