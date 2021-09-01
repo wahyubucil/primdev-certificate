@@ -1,4 +1,4 @@
-import React, { useEffect, useState, VFC } from 'react';
+import React, { useEffect, useState, FC } from 'react';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -40,7 +40,7 @@ import { getContractConfig } from '@/contract-config';
 
 const { Title, Text } = Typography;
 
-const NotFound: VFC = () => {
+const NotFound: FC = () => {
   const history = useHistory();
 
   return (
@@ -57,7 +57,7 @@ const NotFound: VFC = () => {
   );
 };
 
-const CertificateDetail: VFC = () => {
+const CertificateDetail: FC = () => {
   const { code } = useParams<{ code: string }>();
   const db = getFirestore();
   const history = useHistory();

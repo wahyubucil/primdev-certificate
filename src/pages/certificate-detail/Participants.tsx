@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, VFC } from 'react';
+import React, { useEffect, useRef, useState, FC } from 'react';
 import { CheckOutlined, CloseOutlined, EditOutlined } from '@ant-design/icons';
 import { Button, Input, message, Space, Typography } from 'antd';
 import type { MessageType } from 'antd/lib/message';
@@ -11,7 +11,7 @@ interface ParticipantsProps {
   revoked: boolean;
 }
 
-export const Participants: VFC<ParticipantsProps> = ({
+export const Participants: FC<ParticipantsProps> = ({
   code,
   data,
   revoked,

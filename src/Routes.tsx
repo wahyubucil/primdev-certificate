@@ -1,5 +1,5 @@
 import { Alert } from 'antd';
-import React, { VFC, lazy, Suspense } from 'react';
+import React, { FC, lazy, Suspense } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Loader } from './components/Loader';
 import { PrivateRoute } from './components/PrivateRoute';
@@ -9,7 +9,7 @@ const Home = lazy(() => import('./pages/home'));
 const Dashboard = lazy(() => import('./pages/dashboard'));
 const Login = lazy(() => import('./pages/login'));
 
-export const Routes: VFC = () => {
+export const Routes: FC = () => {
   const auth = useAuth();
 
   return (

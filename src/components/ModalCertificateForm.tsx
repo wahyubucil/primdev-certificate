@@ -1,4 +1,4 @@
-import React, { useState, VFC } from 'react';
+import React, { useState, FC } from 'react';
 import ReactDOM from 'react-dom';
 import { Form, Input, InputNumber, message, Modal } from 'antd';
 import {
@@ -30,7 +30,7 @@ interface ModalProps extends FuncProps {
   afterClose?: () => void;
 }
 
-interface ModalCertificateFormInterface extends VFC<ModalProps> {
+interface ModalCertificateFormInterface extends FC<ModalProps> {
   show: typeof show;
 }
 

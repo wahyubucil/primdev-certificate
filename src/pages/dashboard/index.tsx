@@ -15,7 +15,7 @@ import {
   LogoutOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import React, { VFC, lazy, Suspense, useEffect, useState } from 'react';
+import React, { FC, lazy, Suspense, useEffect, useState } from 'react';
 import { Link, Route, Switch, useRouteMatch } from 'react-router-dom';
 import type { User } from 'firebase/auth';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
@@ -31,7 +31,7 @@ const CertificateDetail = lazy(() => import('../certificate-detail'));
 
 const { Header, Content, Footer: AntdFooter } = Layout;
 
-const Dashboard: VFC = () => {
+const Dashboard: FC = () => {
   const auth = useAuth();
   const match = useRouteMatch();
   const screens = Grid.useBreakpoint();

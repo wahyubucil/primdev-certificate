@@ -1,4 +1,4 @@
-import React, { VFC } from 'react';
+import React, { FC } from 'react';
 import { getContractConfig } from '@/contract-config';
 import { useMetaMask } from '@/hooks/useMetaMask';
 import {
@@ -12,7 +12,7 @@ import './Footer.scss';
 
 const { Text, Link } = Typography;
 
-export const ContractAddress: VFC = () => {
+export const ContractAddress: FC = () => {
   const { error, provider } = useMetaMask();
 
   if (error) return <Text>Not connected</Text>;
@@ -37,7 +37,7 @@ export const ContractAddress: VFC = () => {
   );
 };
 
-export const Footer: VFC<{
+export const Footer: FC<{
   withPadding?: boolean;
   withContractAddress?: boolean;
 }> = ({ withPadding = true, withContractAddress = true }) => (

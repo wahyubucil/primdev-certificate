@@ -1,4 +1,4 @@
-import React, { useEffect, useState, VFC } from 'react';
+import React, { useEffect, useState, FC } from 'react';
 import { Link } from 'react-router-dom';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Card, Col, Row, Space, Spin, Typography } from 'antd';
@@ -27,7 +27,7 @@ function blockchainStatusType(status: BlockchainStatus): BaseType | undefined {
   }
 }
 
-export const CertificateCard: VFC<{ data: Certificate }> = ({ data }) => {
+export const CertificateCard: FC<{ data: Certificate }> = ({ data }) => {
   const [blockchainStatus, setBlockchainStatus] = useState<BlockchainStatus>();
   const { error, provider } = useMetaMask();
 

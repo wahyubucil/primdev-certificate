@@ -1,4 +1,4 @@
-import React, { VFC } from 'react';
+import React, { FC } from 'react';
 import { Alert, Button } from 'antd';
 import { useMetaMask } from '@/hooks/useMetaMask';
 
@@ -8,7 +8,7 @@ interface Props {
   className?: string;
 }
 
-export const MetaMaskDetector: VFC<Props> = (props) => {
+export const MetaMaskDetector: FC<Props> = (props) => {
   const { error } = useMetaMask();
 
   if (!error) return null;

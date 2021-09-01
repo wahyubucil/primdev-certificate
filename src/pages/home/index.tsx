@@ -1,4 +1,4 @@
-import React, { useState, VFC } from 'react';
+import React, { useState, FC } from 'react';
 import { Button, Form, Input, Result, Typography } from 'antd';
 import to from 'await-to-js';
 import logo from '@/assets/logo-primakara-developers.svg';
@@ -23,7 +23,7 @@ interface ResultInfo {
 
 const { Title, Paragraph, Text } = Typography;
 
-const Home: VFC = () => {
+const Home: FC = () => {
   const { error, provider } = useMetaMask();
   const [formLoading, setformLoading] = useState(false);
   const [result, setResult] = useState<ResultInfo>();

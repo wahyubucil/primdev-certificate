@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState, VFC } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, FC } from 'react';
 import {
   CheckCircleFilled,
   ExclamationCircleFilled,
@@ -28,7 +28,7 @@ type UpdateMethod = 'metadata' | 'participants' | 'all';
 
 const { Text } = Typography;
 
-export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
+export const BlockchainInfo: FC<{ certificate: Certificate }> = ({
   certificate,
 }) => {
   const { error, provider } = useMetaMask();

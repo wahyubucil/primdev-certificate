@@ -1,4 +1,4 @@
-import React, { useState, VFC } from 'react';
+import React, { useState, FC } from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Typography } from 'antd';
 import to from 'await-to-js';
@@ -15,7 +15,7 @@ type FormValues = {
 
 type Location = ReturnType<typeof useLocation>;
 
-const Login: VFC = () => {
+const Login: FC = () => {
   const [loading, setLoading] = useState(false);
   const history = useHistory();
   const location = useLocation<{ from: Location }>();

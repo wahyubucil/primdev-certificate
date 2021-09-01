@@ -1,4 +1,4 @@
-import React, { useEffect, useState, VFC } from 'react';
+import React, { useEffect, useState, FC } from 'react';
 import { Button, List, Row, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { collection, getDocs, getFirestore } from 'firebase/firestore';
@@ -8,7 +8,7 @@ import { ModalCertificateForm } from '@/components/ModalCertificateForm';
 import { CertificateCard } from './CertificateCard';
 import { MetaMaskDetector } from '@/components/MetaMaskDetector';
 
-const CertificateList: VFC = () => {
+const CertificateList: FC = () => {
   const [certificates, setCertificates] = useState<Certificate[]>();
   const [loading, setLoading] = useState(true);
   const db = getFirestore();
