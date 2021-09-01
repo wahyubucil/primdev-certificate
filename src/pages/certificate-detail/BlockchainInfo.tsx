@@ -23,6 +23,7 @@ import { CertificateManager__factory } from '@/contract-types';
 import { CertificateContract, State } from '@/models/CertificateContract';
 import { OwnerCheck } from './OwnerCheck';
 import { getContractConfig } from '@/contract-config';
+import { displayTransactionHash } from '@/utils/transaction-hash';
 
 type UpdateMethod = 'metadata' | 'participants' | 'all';
 
@@ -127,8 +128,12 @@ export const BlockchainInfo: FC<{ certificate: Certificate }> = ({
       }
 
       setLoading(true);
-      await transaction?.wait();
-      message.success('Blockchain data created');
+      await transaction!.wait();
+      displayTransactionHash(
+        'Blockchain data created',
+        transaction!.hash,
+        config!.blockExplorerUrl,
+      );
       await getData();
     }
 

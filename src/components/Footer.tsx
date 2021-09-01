@@ -28,7 +28,6 @@ export const ContractAddress: FC = () => {
   return (
     <Link
       href={`${config.blockExplorerUrl}/address/${config.address}`}
-      style={{ wordBreak: 'break-word' }}
       copyable
       target="_blank"
     >
