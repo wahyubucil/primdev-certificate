@@ -36,7 +36,7 @@ import { Participants } from './Participants';
 import { useMetaMask } from '@/hooks/useMetaMask';
 import { CertificateManager__factory } from '@/contract-types';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
-import { contractConfig } from '@/contract-config';
+import { getContractConfig } from '@/contract-config';
 
 const { Title, Text } = Typography;
 
@@ -89,6 +89,12 @@ const CertificateDetail: VFC = () => {
       return;
     }
 
+    const config = getContractConfig(provider);
+    if (!config || !config.address) {
+      message.error('Network not supported');
+      return;
+    }
+
     Modal.confirm({
       title: 'Are you sure to revoke this certificate?',
       icon: <ExclamationCircleOutlined />,
@@ -98,7 +104,7 @@ const CertificateDetail: VFC = () => {
       cancelText: 'No',
       onOk: async () => {
         const certificateManager = CertificateManager__factory.connect(
-          contractConfig[provider.network.chainId].address,
+          config.address!,
           provider,
         );
         const [, certificate] = await to(
@@ -141,6 +147,12 @@ const CertificateDetail: VFC = () => {
       return;
     }
 
+    const config = getContractConfig(provider);
+    if (!config || !config.address) {
+      message.error('Network not supported');
+      return;
+    }
+
     Modal.confirm({
       title: 'Are you sure to remove this certificate?',
       icon: <ExclamationCircleOutlined />,
@@ -150,7 +162,7 @@ const CertificateDetail: VFC = () => {
       cancelText: 'No',
       onOk: async () => {
         const certificateManager = CertificateManager__factory.connect(
-          contractConfig[provider.network.chainId].address,
+          config.address!,
           provider,
         );
         const [, certificate] = await to(

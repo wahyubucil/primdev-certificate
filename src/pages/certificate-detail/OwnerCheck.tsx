@@ -3,7 +3,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Button, message, Space, Spin, Typography } from 'antd';
 import { useMetaMask } from '@/hooks/useMetaMask';
 import { CertificateManager__factory } from '@/contract-types';
-import { contractConfig } from '@/contract-config';
+import { getContractConfig } from '@/contract-config';
 
 const { Text } = Typography;
 
@@ -11,20 +11,21 @@ export const OwnerCheck: FC = ({ children }) => {
   const { error, provider, account, connect } = useMetaMask();
   const [loading, setLoading] = useState(false);
   const [owner, setOwner] = useState<string>();
+  const config = getContractConfig(provider);
 
   useEffect(() => {
-    if (!provider || !account) return;
+    if (!provider || !account || !config?.address) return;
 
     setLoading(true);
     const certificateManager = CertificateManager__factory.connect(
-      contractConfig[provider.network.chainId].address,
+      config.address,
       provider,
     );
     certificateManager.owner().then((value) => {
       setOwner(value.toLowerCase());
       setLoading(false);
     });
-  }, [provider, account]);
+  }, [provider, account, config]);
 
   if (error) return null;
 
@@ -34,6 +35,8 @@ export const OwnerCheck: FC = ({ children }) => {
         Loading Owner Check <Spin indicator={<LoadingOutlined spin />} />
       </Space>
     );
+
+  if (!config?.address) return null;
 
   if (account === false || !owner) {
     function doConnect() {
