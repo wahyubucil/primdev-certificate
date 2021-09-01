@@ -71,7 +71,7 @@ const Login: VFC = () => {
           </Form.Item>
         </Form>
       </div>
-      <Footer />
+      <Footer withContractAddress={false} />
     </div>
   );
 };

@@ -20,8 +20,12 @@
     }
   }
 
+  &__contract-address {
+    margin-bottom: 8px;
+  }
+
   &__links {
-    margin: 8px 0;
+    margin-bottom: 8px;
 
     @media only screen and (max-width: 575px) {
       display: flex;

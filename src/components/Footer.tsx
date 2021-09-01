@@ -37,15 +37,18 @@ export const ContractAddress: VFC = () => {
   );
 };
 
-export const Footer: VFC<{ withPadding?: boolean }> = ({
-  withPadding = true,
-}) => (
+export const Footer: VFC<{
+  withPadding?: boolean;
+  withContractAddress?: boolean;
+}> = ({ withPadding = true, withContractAddress = true }) => (
   <div
     className={classNames(['Footer', { 'Footer--with-padding': withPadding }])}
   >
-    <div>
-      Contract Address : <ContractAddress />
-    </div>
+    {withContractAddress && (
+      <div className="Footer__contract-address">
+        Contract Address : <ContractAddress />
+      </div>
+    )}
     <div className="Footer__links">
       <a
         target="_blank"
