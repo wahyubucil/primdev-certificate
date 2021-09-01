@@ -21,7 +21,7 @@ export const ContractAddress: VFC = () => {
 
   const config = getContractConfig(provider);
 
-  if (!config || !config.address) return <Text>None</Text>;
+  if (!config?.address) return <Text>None</Text>;
 
   if (!config.blockExplorerUrl) return <Text copyable>{config.address}</Text>;
 

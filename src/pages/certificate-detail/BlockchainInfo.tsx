@@ -40,7 +40,7 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
   const getData = useCallback(async () => {
     if (!provider) return;
 
-    if (!config || !config.address) {
+    if (!config?.address) {
       setLoading(false);
       return;
     }
@@ -100,7 +100,7 @@ export const BlockchainInfo: VFC<{ certificate: Certificate }> = ({
       </Space>
     );
 
-  if (!config || !config.address) return <Text>Network not supported</Text>;
+  if (!config?.address) return <Text>Network not supported</Text>;
 
   if (!data) {
     async function create() {

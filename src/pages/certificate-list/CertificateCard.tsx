@@ -7,11 +7,15 @@ import type { Certificate } from '@/models/Certificate';
 import { useMetaMask } from '@/hooks/useMetaMask';
 import { CertificateManager__factory } from '@/contract-types';
 import './CertificateCard.scss';
-import { contractConfig } from '@/contract-config';
+import { getContractConfig } from '@/contract-config';
 
 const { Text } = Typography;
 
-type BlockchainStatus = 'Available' | 'Not available' | 'Not connected';
+type BlockchainStatus =
+  | 'Available'
+  | 'Not available'
+  | 'Not connected'
+  | 'Network not supported';
 function blockchainStatusType(status: BlockchainStatus): BaseType | undefined {
   switch (status) {
     case 'Available':
@@ -35,8 +39,14 @@ export const CertificateCard: VFC<{ data: Certificate }> = ({ data }) => {
 
     if (!provider) return;
 
+    const config = getContractConfig(provider);
+    if (!config?.address) {
+      setBlockchainStatus('Network not supported');
+      return;
+    }
+
     const certificateManager = CertificateManager__factory.connect(
-      contractConfig[provider.network.chainId].address,
+      config.address,
       provider,
     );
     certificateManager

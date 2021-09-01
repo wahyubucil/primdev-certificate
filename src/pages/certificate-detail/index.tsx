@@ -90,7 +90,7 @@ const CertificateDetail: VFC = () => {
     }
 
     const config = getContractConfig(provider);
-    if (!config || !config.address) {
+    if (!config?.address) {
       message.error('Network not supported');
       return;
     }
@@ -148,7 +148,7 @@ const CertificateDetail: VFC = () => {
     }
 
     const config = getContractConfig(provider);
-    if (!config || !config.address) {
+    if (!config?.address) {
       message.error('Network not supported');
       return;
     }
