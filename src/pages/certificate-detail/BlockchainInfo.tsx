@@ -200,8 +200,12 @@ export const BlockchainInfo: FC<{ certificate: Certificate }> = ({
     }
 
     setLoading(true);
-    await transaction?.wait();
-    message.success('Blockchain data updated');
+    await transaction!.wait();
+    displayTransactionHash(
+      'Blockchain data updated',
+      transaction!.hash,
+      config!.blockExplorerUrl,
+    );
     setUpdateMethod(null);
     await getData();
   }

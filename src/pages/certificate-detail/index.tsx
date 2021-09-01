@@ -37,6 +37,7 @@ import { useMetaMask } from '@/hooks/useMetaMask';
 import { CertificateManager__factory } from '@/contract-types';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 import { getContractConfig } from '@/contract-config';
+import { displayTransactionHash } from '@/utils/transaction-hash';
 
 const { Title, Text } = Typography;
 
@@ -131,12 +132,22 @@ const CertificateDetail: FC = () => {
             message.error('Please accept to continue!');
             return;
           }
-          await transaction?.wait();
-        }
 
-        const docRef = doc(db, 'certificates', code.toString());
-        await updateDoc(docRef, { revoked: true });
-        message.success('Certificate revoked');
+          await transaction!.wait();
+
+          const docRef = doc(db, 'certificates', code.toString());
+          await updateDoc(docRef, { revoked: true });
+
+          displayTransactionHash(
+            'Certificate revoked',
+            transaction!.hash,
+            config!.blockExplorerUrl,
+          );
+        } else {
+          const docRef = doc(db, 'certificates', code.toString());
+          await updateDoc(docRef, { revoked: true });
+          message.success('Certificate revoked');
+        }
       },
     });
   }
@@ -189,12 +200,23 @@ const CertificateDetail: FC = () => {
             message.error('Please accept to continue!');
             return;
           }
-          await transaction?.wait();
+
+          await transaction!.wait();
+
+          const docRef = doc(db, 'certificates', code.toString());
+          await deleteDoc(docRef);
+
+          displayTransactionHash(
+            'Certificate removed',
+            transaction!.hash,
+            config!.blockExplorerUrl,
+          );
+        } else {
+          const docRef = doc(db, 'certificates', code.toString());
+          await deleteDoc(docRef);
+          message.success('Certificate removed');
         }
 
-        const docRef = doc(db, 'certificates', code.toString());
-        await deleteDoc(docRef);
-        message.success('Certificate removed');
         history.push('/dashboard');
       },
     });
